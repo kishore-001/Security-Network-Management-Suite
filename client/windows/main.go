@@ -12,6 +12,8 @@ func main() {
 
 	// Register routes for config-1 page
 	api.RegisterConfig1Routes(mux)
+	// Register routes for config-2 page
+	api.RegisterConfig2Routes(mux)
 
 	log.Println("Starting client server on port 8080...")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
