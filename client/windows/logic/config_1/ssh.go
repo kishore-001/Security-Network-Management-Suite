@@ -1,33 +1,44 @@
 package config_1
 
 import (
-	"io"
+	"encoding/json"
 	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
 )
 
+// Define the structure of the expected JSON
+type SSHKeyPayload struct {
+	PublicKey string `json:"public_key"`
+}
+
 func HandleSSHUpload(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	body, err := io.ReadAll(r.Body)
+	// Decode JSON body
+	var payload SSHKeyPayload
+	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		http.Error(w, "Failed to read request body", http.StatusBadRequest)
+		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
 		return
 	}
 
-	// Get current user
+	if payload.PublicKey == "" {
+		http.Error(w, "Public key is required", http.StatusBadRequest)
+		return
+	}
+
+	// Get current user home directory
 	currentUser, err := user.Current()
 	if err != nil {
 		http.Error(w, "Unable to determine current user", http.StatusInternalServerError)
 		return
 	}
 
-	// Windows-style SSH directory path
 	sshDir := filepath.Join(currentUser.HomeDir, ".ssh")
 	authKeysPath := filepath.Join(sshDir, "authorized_keys")
 
@@ -39,9 +50,16 @@ func HandleSSHUpload(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Overwrite (or write) SSH key to authorized_keys
-	err = os.WriteFile(authKeysPath, body, 0600)
+	// Open the authorized_keys file for appending
+	f, err := os.OpenFile(authKeysPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
+		http.Error(w, "Failed to open authorized_keys", http.StatusInternalServerError)
+		return
+	}
+	defer f.Close()
+
+	// Write the public key with a newline
+	if _, err := f.WriteString(payload.PublicKey + "\n"); err != nil {
 		http.Error(w, "Failed to write SSH key", http.StatusInternalServerError)
 		return
 	}
