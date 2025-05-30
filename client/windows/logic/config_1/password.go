@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os/exec"
+	"strconv"
 )
 
 type PasswordChange struct {
@@ -30,9 +31,10 @@ func HandlePasswordChange(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// NOTE: This skips old password verification and requires admin rights
 	cmd := exec.Command("powershell", "-Command",
-		`net user "`+p.Username+`" "`+p.NewPassword+`"`)
+		`Set-LocalUser -Name `+strconv.Quote(p.Username)+
+			` -Password (ConvertTo-SecureString `+strconv.Quote(p.NewPassword)+
+			` -AsPlainText -Force)`)
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
