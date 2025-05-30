@@ -29,10 +29,6 @@ type NetworkConfigResponse struct {
 // HandleNetworkConfig provides network configuration as an HTTP response
 // in the exact format specified
 func HandleNetworkConfig(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted):",
-		time.Now().UTC().Format("2006-01-02 15:04:05"))
-	fmt.Println("Current User's Login: kishore-001")
-	fmt.Println("Handling network configuration request...")
 
 	// Check for GET method
 	if r.Method != http.MethodGet {
