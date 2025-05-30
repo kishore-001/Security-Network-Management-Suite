@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
-	"time"
 )
 
 // InterfaceInfo represents information about a network interface
@@ -121,7 +120,7 @@ func HandleNetworkConfig(w http.ResponseWriter, r *http.Request) {
 	if response.IPMethod == "dhcp" {
 		response.IPMethod = "dynamic"
 	} else if response.IPMethod == "unknown" {
-		response.IPMethod = "static" // Default to static if unknown
+		response.IPMethod = "dhcp" // Default to static if unknown
 	}
 
 	fmt.Println("Sending network configuration response...")
