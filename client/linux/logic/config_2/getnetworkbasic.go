@@ -22,6 +22,7 @@ type NetworkConfigResponse struct {
 	Gateway   string                   `json:"gateway"`
 	Subnet    string                   `json:"subnet"`
 	DNS       string                   `json:"dns"`
+	Uptime    string                   `json:"uptime"`
 	Interface map[string]InterfaceInfo `json:"interface"`
 }
 
@@ -45,11 +46,14 @@ func HandleNetworkConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get default route to determine active interface and gateway
-	defaultRoute, err := getDefaultRoute()
+	// Get default route to determine active interface, gateway and IP method
+	defaultRoutes, err := getDefaultRoutes()
 	if err != nil {
-		defaultRoute = DefaultRoute{} // Continue with empty route info
+		defaultRoutes = []DefaultRoute{} // Continue with empty route info
 	}
+
+	// Find primary active interface (the one with lowest metric)
+	activeRoute := getActiveRoute(defaultRoutes)
 
 	// Get DNS servers
 	dnsServers, err := getDNSServers()
@@ -57,14 +61,26 @@ func HandleNetworkConfig(w http.ResponseWriter, r *http.Request) {
 		dnsServers = []string{} // Continue with empty DNS info
 	}
 
+	// Get Uptime
+	uptime, err := getSystemUptime()
+	if err != nil {
+		uptime = "unknown"
+	}
+
 	// Prepare response in the requested format
 	response := NetworkConfigResponse{
-		IPMethod:  "unknown",
+		IPMethod:  "static", // Default to static
 		IPAddress: "",
-		Gateway:   defaultRoute.Gateway,
+		Gateway:   activeRoute.Gateway,
 		Subnet:    "",
 		DNS:       strings.Join(dnsServers, ", "),
+		Uptime:    uptime,
 		Interface: make(map[string]InterfaceInfo),
+	}
+
+	// Set IP method based on active route's proto
+	if activeRoute.Proto == "dhcp" {
+		response.IPMethod = "dynamic"
 	}
 
 	// Process each interface
@@ -80,47 +96,43 @@ func HandleNetworkConfig(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Determine if this interface is active
-		isActive := iface.Name == defaultRoute.Interface
-		status := "inactive" // Default to inactive
+		isActive := iface.Name == activeRoute.Interface
+
+		// Add interface to the map with appropriate status
+		status := "inactive"
 		if isActive {
 			status = "active"
-			// Get IP method for active interface only
-			response.IPMethod = getIPMethod(iface.Name)
 		}
 
-		// Add interface to the map
 		response.Interface[fmt.Sprintf("%d", interfaceCount)] = InterfaceInfo{
 			Mode:   iface.Name,
-			Status: status, // Now will be either "active" or "inactive"
+			Status: status,
 		}
 		interfaceCount++
 
 		// Get IP address and subnet for active interface
 		if isActive {
-			addrs, err := iface.Addrs()
-			if err == nil {
-				for _, addr := range addrs {
-					if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-						if ipnet.IP.To4() != nil { // Only consider IPv4 for now
-							response.IPAddress = ipnet.IP.String()
-
-							// Calculate subnet in CIDR notation
-							ones, _ := ipnet.Mask.Size()
-							response.Subnet = fmt.Sprintf("%s/%d",
-								ipnet.IP.Mask(ipnet.Mask).String(), ones)
-							break
+			// Use IP address from the route if available
+			if activeRoute.SourceIP != "" {
+				response.IPAddress = activeRoute.SourceIP
+			} else {
+				// Fall back to getting IP from interface if not in route info
+				addrs, err := iface.Addrs()
+				if err == nil {
+					for _, addr := range addrs {
+						if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+							if ipnet.IP.To4() != nil { // Only consider IPv4 for now
+								response.IPAddress = ipnet.IP.String()
+								break
+							}
 						}
 					}
 				}
 			}
-		}
-	}
 
-	// Convert response.IPMethod to "static" or "dynamic" as requested
-	if response.IPMethod == "dhcp" {
-		response.IPMethod = "dynamic"
-	} else if response.IPMethod == "unknown" {
-		response.IPMethod = "dhcp" // Default to static if unknown
+			// Get subnet information
+			response.Subnet = getSubnetForInterface(iface.Name)
+		}
 	}
 
 	fmt.Println("Sending network configuration response...")
@@ -128,45 +140,121 @@ func HandleNetworkConfig(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// DefaultRoute represents the default gateway route
+// DefaultRoute represents a route with additional information
 type DefaultRoute struct {
 	Interface string
 	Gateway   string
+	Proto     string // dhcp, static, etc.
+	SourceIP  string // Source IP address
+	Metric    int    // Route priority
 }
 
-// getDefaultRoute gets the default gateway and interface
-func getDefaultRoute() (DefaultRoute, error) {
-	route := DefaultRoute{}
+// getDefaultRoutes gets all default gateway routes
+func getDefaultRoutes() ([]DefaultRoute, error) {
+	routes := []DefaultRoute{}
 
-	// Run ip route command to get default route
+	// Run ip route command to get default routes
 	cmd := exec.Command("ip", "route", "show", "default")
 	output, err := cmd.Output()
 	if err != nil {
-		return route, err
+		return routes, err
 	}
 
-	// Parse output like: "default via 192.168.1.1 dev eth0"
+	// Parse each default route line
 	routeStr := string(output)
 	if routeStr == "" {
-		return route, fmt.Errorf("no default route found")
+		return routes, fmt.Errorf("no default route found")
 	}
 
-	parts := strings.Fields(routeStr)
-	if len(parts) < 5 || parts[0] != "default" || parts[1] != "via" {
-		return route, fmt.Errorf("unexpected route format: %s", routeStr)
-	}
+	for _, line := range strings.Split(routeStr, "\n") {
+		if line == "" {
+			continue
+		}
 
-	route.Gateway = parts[2]
+		// Skip non-default routes
+		if !strings.HasPrefix(line, "default") {
+			continue
+		}
 
-	// Find the dev part
-	for i, part := range parts {
-		if part == "dev" && i+1 < len(parts) {
-			route.Interface = parts[i+1]
-			break
+		route := DefaultRoute{
+			Metric: 999999, // Default high metric
+		}
+
+		parts := strings.Fields(line)
+		for i, part := range parts {
+			switch part {
+			case "via":
+				if i+1 < len(parts) {
+					route.Gateway = parts[i+1]
+				}
+			case "dev":
+				if i+1 < len(parts) {
+					route.Interface = parts[i+1]
+				}
+			case "proto":
+				if i+1 < len(parts) {
+					route.Proto = parts[i+1]
+				}
+			case "src":
+				if i+1 < len(parts) {
+					route.SourceIP = parts[i+1]
+				}
+			case "metric":
+				if i+1 < len(parts) {
+					fmt.Sscanf(parts[i+1], "%d", &route.Metric)
+				}
+			}
+		}
+
+		// Only add routes with an interface
+		if route.Interface != "" {
+			routes = append(routes, route)
 		}
 	}
 
-	return route, nil
+	return routes, nil
+}
+
+// getActiveRoute returns the route with the lowest metric (highest priority)
+func getActiveRoute(routes []DefaultRoute) DefaultRoute {
+	if len(routes) == 0 {
+		return DefaultRoute{}
+	}
+
+	activeRoute := routes[0]
+	for _, route := range routes {
+		if route.Metric < activeRoute.Metric {
+			activeRoute = route
+		}
+	}
+
+	return activeRoute
+}
+
+// getSubnetForInterface gets the subnet for a specific interface
+func getSubnetForInterface(ifaceName string) string {
+	// Run ip addr command to get subnet information
+	cmd := exec.Command("ip", "addr", "show", ifaceName)
+	output, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+
+	// Parse output for IPv4 subnet in CIDR notation
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if strings.Contains(line, "inet ") {
+			parts := strings.Fields(line)
+			for _, part := range parts {
+				if strings.Contains(part, "/") && net.ParseIP(strings.Split(part, "/")[0]).To4() != nil {
+					return part // Return the CIDR notation (e.g., 192.168.1.100/24)
+				}
+			}
+		}
+	}
+
+	return ""
 }
 
 // getDNSServers reads DNS servers from /etc/resolv.conf
@@ -194,34 +282,29 @@ func getDNSServers() ([]string, error) {
 	return servers, nil
 }
 
-// getIPMethod determines if the interface uses DHCP or static IP
-func getIPMethod(ifaceName string) string {
-	// Check if dhclient is running for this interface
-	cmd := exec.Command("ps", "-ef")
-	output, err := cmd.Output()
+// obtain the uptime for the server
+func getSystemUptime() (string, error) {
+	// This works on Linux; reads uptime in seconds from /proc/uptime
+	data, err := exec.Command("cut", "-d", " ", "-f1", "/proc/uptime").Output()
 	if err != nil {
-		return "unknown"
+		return "", err
 	}
 
-	if strings.Contains(string(output), "dhclient "+ifaceName) ||
-		strings.Contains(string(output), "dhclient -i "+ifaceName) ||
-		strings.Contains(string(output), "dhcpcd "+ifaceName) {
-		return "dhcp"
+	// Parse float value and convert to human readable format
+	secondsStr := strings.TrimSpace(string(data))
+	var seconds float64
+	_, err = fmt.Sscanf(secondsStr, "%f", &seconds)
+	if err != nil {
+		return "", err
 	}
 
-	// Also check for NetworkManager DHCP
-	cmd = exec.Command("nmcli", "-g", "IP4.ADDRESS", "device", "show", ifaceName)
-	if _, err := cmd.Output(); err == nil {
-		// If we can get the IP from NetworkManager, check if DHCP is enabled
-		cmd = exec.Command("nmcli", "-g", "IP4.METHOD", "device", "show", ifaceName)
-		output, err := cmd.Output()
-		if err == nil && strings.Contains(string(output), "auto") {
-			return "dhcp"
-		}
-	}
+	dur := int64(seconds)
+	days := dur / (60 * 60 * 24)
+	hours := (dur / (60 * 60)) % 24
+	minutes := (dur / 60) % 60
+	secs := dur % 60
 
-	// Default to static if no DHCP client found
-	return "static"
+	return fmt.Sprintf("%dd %dh %dm %ds", days, hours, minutes, secs), nil
 }
 
 // sendError sends an error response in JSON format
