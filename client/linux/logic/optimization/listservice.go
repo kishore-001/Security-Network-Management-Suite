@@ -23,33 +23,35 @@ type ServiceListResult struct {
 	Timestamp string        `json:"timestamp"`
 }
 
-// isUserService returns true if the process looks like a user-level service or app server
+// isUserService filters out system processes and focuses on user-level servers/apps
 func isUserService(proc *process.Process) bool {
 	name, _ := proc.Name()
 	cmd, _ := proc.Cmdline()
 
-	// Skip kernel threads and system daemons with no proper names
-	if strings.HasPrefix(name, "[") || name == "" {
+	// Skip empty names
+	if name == "" {
 		return false
 	}
 
-	// Skip known system/daemon processes
+	// Windows built-in system processes to skip
 	systemProcesses := []string{
-		"systemd", "kthreadd", "rcu_sched", "ksoftirqd", "kworker",
-		"bioset", "kswapd", "watchdog", "migration", "jbd2",
-		"khugepaged", "ksmd",
+		"System", "Idle", "smss.exe", "csrss.exe", "wininit.exe", "services.exe",
+		"lsass.exe", "svchost.exe", "winlogon.exe", "fontdrvhost.exe", "dwm.exe",
+		"explorer.exe", "conhost.exe", "taskhostw.exe", "SearchIndexer.exe",
 	}
+	nameLower := strings.ToLower(name)
 	for _, sys := range systemProcesses {
-		if strings.Contains(name, sys) {
+		if nameLower == strings.ToLower(sys) {
 			return false
 		}
 	}
 
-	// Common user-level services/servers keywords
+	// Detect common user services
 	serviceKeywords := []string{
 		"nginx", "apache", "httpd", "node", "python", "uwsgi", "gunicorn",
-		"php", "ruby", "rails", "mysql", "postgres", "mongod", "redis", "memcached",
-		"java", "go", "dotnet", "pm2", "serve", "flask", "django", "express",
+		"php", "ruby", "rails", "mysql", "postgres", "mongod", "redis",
+		"memcached", "java", "go", "dotnet", "pm2", "serve", "flask", "django", "express",
+		"powershell", "cmd.exe",
 	}
 	for _, kw := range serviceKeywords {
 		if strings.Contains(strings.ToLower(name), kw) || strings.Contains(strings.ToLower(cmd), kw) {
@@ -63,7 +65,12 @@ func isUserService(proc *process.Process) bool {
 func HandleListService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	procs, _ := process.Processes()
+	procs, err := process.Processes()
+	if err != nil {
+		http.Error(w, "Failed to fetch processes", http.StatusInternalServerError)
+		return
+	}
+
 	services := []ServiceInfo{}
 
 	for _, proc := range procs {
@@ -84,7 +91,7 @@ func HandleListService(w http.ResponseWriter, r *http.Request) {
 
 	result := ServiceListResult{
 		Status:    "success",
-		Message:   "List of detected user-level services and application servers",
+		Message:   "List of detected user-level services and application servers (Windows)",
 		Services:  services,
 		Timestamp: time.Now().Format("2006-01-02 15:04:05"),
 	}
