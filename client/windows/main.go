@@ -14,6 +14,10 @@ func main() {
 	api.RegisterConfig1Routes(mux)
 	// Register routes for config-2 page
 	api.RegisterConfig2Routes(mux)
+	//Register routes for health endpoint
+	api.RegisterHealthRoutes(mux)
+	// Register routes for optimization
+	api.RegisterOptimizeRoutes(mux)
 
 	log.Println("Starting client server on port 8080...")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
