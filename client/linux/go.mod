@@ -2,7 +2,10 @@ module linux
 
 go 1.24.3
 
-require github.com/shirou/gopsutil/v3 v3.24.5
+require (
+	github.com/golang-jwt/jwt/v5 v5.2.2
+	github.com/shirou/gopsutil/v3 v3.24.5
+)
 
 require (
 	github.com/go-ole/go-ole v1.2.6 // indirect
