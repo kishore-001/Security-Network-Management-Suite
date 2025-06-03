@@ -59,3 +59,4 @@ func HandleRestartService(w http.ResponseWriter, r *http.Request) {
 	resp.Message = fmt.Sprintf("Service '%s' restarted successfully", serviceName)
 	json.NewEncoder(w).Encode(resp)
 }
+

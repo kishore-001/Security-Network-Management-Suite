@@ -26,7 +26,7 @@ type ServiceListResult struct {
 }
 
 // getRestartableServices retrieves active services managed by systemd
-func getRestartableServices() (map[string]bool, error) {
+func getServices() (map[string]bool, error) {
 	cmd := exec.Command("systemctl", "list-units", "--type=service", "--state=running", "--no-pager", "--no-legend")
 	out, err := cmd.Output()
 	if err != nil {
@@ -54,7 +54,7 @@ func HandleListService(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Get systemctl-managed restartable services
-	restartableServices, err := getRestartableServices()
+	restartableServices, err := getServices()
 	if err != nil {
 		http.Error(w, "Failed to list systemd services", http.StatusInternalServerError)
 		return
