@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const tokenFilePath = "./auth/token.hash"
@@ -35,13 +36,26 @@ func main() {
 // ------------------------------
 // Check and create token hash if missing
 // ------------------------------
+
 func ensureTokenHashExists() {
+	needToken := false
+
+	// Check if file exists
 	if _, err := os.Stat(tokenFilePath); os.IsNotExist(err) {
+		needToken = true
+	} else {
+		// File exists, check contents
+		data, err := os.ReadFile(tokenFilePath)
+		if err != nil || len(strings.TrimSpace(string(data))) != 64 {
+			needToken = true
+		}
+	}
+
+	if needToken {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("🔐 Enter token to register this client: ")
 		token, _ := reader.ReadString('\n')
-		token = trim(token)
-
+		token = strings.TrimSpace(token)
 		hash := sha256.Sum256([]byte(token))
 		hashHex := hex.EncodeToString(hash[:])
 
@@ -54,8 +68,4 @@ func ensureTokenHashExists() {
 
 		fmt.Println("✅ Token hash saved. Server starting...")
 	}
-}
-
-func trim(s string) string {
-	return string([]byte(s)[:len(s)-1]) // remove newline character
 }
