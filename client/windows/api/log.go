@@ -2,9 +2,10 @@ package api
 
 import (
 	"net/http"
+	"windows/auth"
 	log "windows/logic/logs"
 )
 
 func RegisterLogRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("/client/log", log.HandleAllSystemLogs)
+	mux.Handle("/client/log", auth.TokenAuthMiddleware(http.HandlerFunc(log.HandleAllSystemLogs)))
 }

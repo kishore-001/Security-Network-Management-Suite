@@ -2,14 +2,15 @@ package api
 
 import (
 	"net/http"
+	"windows/auth"
 	"windows/logic/config_2"
 )
 
 func RegisterConfig2Routes(mux *http.ServeMux) {
-	mux.HandleFunc("/client/config-2/basic", config_2.NetworkConfigHandler)
-	mux.HandleFunc("/client/config-2/route", config_2.RouteHandler)
-	mux.HandleFunc("/client/config-2/firewall", config_2.GetWindowsFirewallRules)
-	mux.HandleFunc("/client/config-2/updateinterface", config_2.HandleUpdateInterface)
-	mux.HandleFunc("/client/config-2/updatenetwork", config_2.HandleUpdateNetworkConfig)
-	mux.HandleFunc("/client/config-2/postrestartinterface", config_2.HandleRestartInterfaces)
+	mux.Handle("/client/config-2/basic", auth.TokenAuthMiddleware(http.HandlerFunc(config_2.NetworkConfigHandler)))
+	mux.Handle("/client/config-2/route", auth.TokenAuthMiddleware(http.HandlerFunc(config_2.RouteHandler)))
+	mux.Handle("/client/config-2/firewall", auth.TokenAuthMiddleware(http.HandlerFunc(config_2.GetWindowsFirewallRules)))
+	mux.Handle("/client/config-2/updateinterface", auth.TokenAuthMiddleware(http.HandlerFunc(config_2.HandleUpdateInterface)))
+	mux.Handle("/client/config-2/updatenetwork", auth.TokenAuthMiddleware(http.HandlerFunc(config_2.HandleUpdateNetworkConfig)))
+	mux.Handle("/client/config-2/postrestartinterface", auth.TokenAuthMiddleware(http.HandlerFunc(config_2.HandleRestartInterfaces)))
 }
