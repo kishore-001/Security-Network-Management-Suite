@@ -2,11 +2,12 @@ package api
 
 import (
 	"net/http"
+	"windows/auth"
 	"windows/logic/optimization"
 )
 
 func RegisterOptimizeRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("/client/optimize", optimization.HandleFileClean)
-	mux.HandleFunc("/client/service", optimization.HandleRestartableServices)
-	mux.HandleFunc("/client/restartservice", optimization.RestartServiceHandler)
+	mux.Handle("/client/optimize", auth.TokenAuthMiddleware(http.HandlerFunc(optimization.HandleFileClean)))
+	mux.Handle("/client/service", auth.TokenAuthMiddleware(http.HandlerFunc(optimization.HandleRestartableServices)))
+	mux.Handle("/client/restartservice", auth.TokenAuthMiddleware(http.HandlerFunc(optimization.RestartServiceHandler)))
 }
