@@ -5,118 +5,79 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"os/exec"
 	"os/user"
 	"path/filepath"
-	"time"
 )
 
-type CleanResult struct {
-	Status            string   `json:"status"`
-	Message           string   `json:"message"`
-	DirsCleaned       []string `json:"dirs_cleaned"`
-	DirsFailed        []string `json:"dirs_failed"`
-	RecycleBinCleared bool     `json:"recycle_bin_cleared"`
-	Timestamp         string   `json:"timestamp"`
-	User              string   `json:"user"`
-}
-
-// cleanDir removes all files and folders inside the given directory
-func cleanDir(path string) error {
-	dir, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-	defer dir.Close()
-
-	names, err := dir.Readdirnames(-1)
-	if err != nil {
-		return err
-	}
-
-	for _, name := range names {
-		fullPath := filepath.Join(path, name)
-		err := os.RemoveAll(fullPath)
+// sizeOfDir recursively calculates the total size of files in a directory
+func sizeOfDir(path string) (int64, error) {
+	var total int64
+	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-	}
-	return nil
+		if !info.IsDir() {
+			total += info.Size()
+		}
+		return nil
+	})
+	return total, err
 }
 
-// clearRecycleBin tries to empty the Recycle Bin using PowerShell
-func clearRecycleBin() error {
-	cmd := exec.Command("PowerShell", "-Command", "Clear-RecycleBin -Force")
-	return cmd.Run()
-}
-
-func HandleFileClean(w http.ResponseWriter, r *http.Request) {
+// HandleFileInfo returns info about the directories to be cleaned and their current sizes
+func HandleFileInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	if r.Method != http.MethodPost {
-		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Get current user info
-	usr, _ := user.Current()
-
-	// Fetch environment paths
-	temp := os.TempDir()
-	localAppData := os.Getenv("LOCALAPPDATA")
-	appData := os.Getenv("APPDATA")
-	winDir := os.Getenv("SystemRoot")
-	userProfile := os.Getenv("USERPROFILE")
-
-	// Directories to clean
-	dirs := []string{
-		temp,
-		filepath.Join(localAppData, "Temp"),
-		filepath.Join(localAppData, "Cache"),
-		filepath.Join(appData, "Microsoft", "Windows", "Recent"),
-		filepath.Join(winDir, "Temp"),
-		filepath.Join(userProfile, "AppData", "Local", "Microsoft", "Windows", "INetCache"),
-		filepath.Join(userProfile, "AppData", "Local", "CrashDumps"),
-		filepath.Join(userProfile, "AppData", "LocalLow", "Temp"),
+	usr, err := user.Current()
+	if err != nil {
+		http.Error(w, "Cannot get current user", http.StatusInternalServerError)
+		return
 	}
 
-	var cleanedDirs []string
-	var failedDirs []string
+	// On Windows, common temp directories are:
+	// 1. User temp directory from environment variables (TEMP or TMP)
+	// 2. Windows temp directory (C:\Windows\Temp)
+	// 3. User cache directory (if you want to keep .cache inside user profile)
 
-	// Attempt to clean each directory
+	userTemp := os.Getenv("TEMP")
+	if userTemp == "" {
+		userTemp = os.Getenv("TMP")
+	}
+	if userTemp == "" {
+		userTemp = filepath.Join(usr.HomeDir, "AppData", "Local", "Temp")
+	}
+
+	windowsTemp := filepath.Join(os.Getenv("SystemRoot"), "Temp")
+	if windowsTemp == "" {
+		// fallback to default path
+		windowsTemp = `C:\Windows\Temp`
+	}
+
+	userCache := filepath.Join(usr.HomeDir, "AppData", "Local", "Cache")
+
+	dirs := []string{userTemp, windowsTemp, userCache}
+	sizes := make(map[string]int64)
+	var failed []string
+
 	for _, dir := range dirs {
-		if err := cleanDir(dir); err == nil {
-			cleanedDirs = append(cleanedDirs, dir)
+		size, err := sizeOfDir(dir)
+		if err == nil {
+			sizes[dir] = size
 		} else {
-			failedDirs = append(failedDirs, fmt.Sprintf("%s (%v)", dir, err))
+			failed = append(failed, fmt.Sprintf("%s (%v)", dir, err))
 		}
 	}
 
-	// Attempt to clear Recycle Bin
-	recycleBinCleared := true
-	if err := clearRecycleBin(); err != nil {
-		recycleBinCleared = false
+	resp := map[string]interface{}{
+		"folders": dirs,
+		"sizes":   sizes,
+		"failed":  failed,
 	}
 
-	// Final status and message
-	status := "success"
-	if len(failedDirs) > 0 || !recycleBinCleared {
-		status = "partial"
-	}
-	message := fmt.Sprintf("Cleaned: %d directories. Failed: %d directories. Recycle Bin Cleared: %v",
-		len(cleanedDirs), len(failedDirs), recycleBinCleared)
-
-	// Response payload
-	result := CleanResult{
-		Status:            status,
-		Message:           message,
-		DirsCleaned:       cleanedDirs,
-		DirsFailed:        failedDirs,
-		RecycleBinCleared: recycleBinCleared,
-		Timestamp:         time.Now().UTC().Format("2006-01-02 15:04:05"),
-		User:              usr.Username,
-	}
-
-	// Return result
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(resp)
 }
