@@ -28,7 +28,7 @@ go.work
 Thumbs.db
 
 # Auth tokens or secrets
-auth/token.hash
+./auth/token.hash
 
 # Test/build artifacts
 /test/*.out
