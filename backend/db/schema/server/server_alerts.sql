@@ -1,5 +1,3 @@
-schema/server/server_alerts.sql
-
 CREATE TABLE IF NOT EXISTS server_alerts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     severity VARCHAR(20) NOT NULL,

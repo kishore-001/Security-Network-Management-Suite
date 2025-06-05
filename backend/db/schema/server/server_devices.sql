@@ -1,5 +1,3 @@
-schema/server/server_devices.sql
-
 CREATE TABLE IF NOT EXISTS server_devices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     mac VARCHAR(17) NOT NULL,

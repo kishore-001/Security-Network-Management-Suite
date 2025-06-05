@@ -1,6 +1,3 @@
-
-schema/server/server_log_volume.sql
-
 CREATE TABLE IF NOT EXISTS server_log_volume (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     log_date DATE NOT NULL,
