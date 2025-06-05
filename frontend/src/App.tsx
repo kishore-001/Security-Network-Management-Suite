@@ -1,10 +1,16 @@
-import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import Login from "./pages/login/login";
-export default function App() {
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/login/Login';
+
+const App: React.FC = () => {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-    </Routes>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
   );
-}
+};
+
+export default App;
