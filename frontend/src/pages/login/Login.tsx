@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import './login.css';
 import { FaUser, FaLock } from 'react-icons/fa';
@@ -80,6 +81,7 @@ const Login: React.FC = () => {
               />
             </div>
 
+
             <label htmlFor="password">Password</label>
             <div className="input-group">
               <span className="icon">
@@ -94,7 +96,6 @@ const Login: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-
             <div className="options-row">
               <label>
                 <input type="checkbox" style={{ marginRight: '6px' }} />
