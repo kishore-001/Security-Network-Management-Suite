@@ -1,11 +1,10 @@
 package main
 
 import (
+	"backend/api/common"
 	"backend/config"
 	"log"
 	"net/http"
-
-	"backend/api/common"
 )
 
 func main() {
@@ -33,9 +32,10 @@ func main() {
 	// 🛠️ Register Common Routes (Login, Settings, etc.)
 	//	common.RegisterSettingsRoutes(mux)
 	common.RegisterLoginRoute(mux, queries)
+	handlerWithCORS := config.CORS(mux)
 
 	log.Println("✅ SNSMS backend running on port 8000...")
-	if err := http.ListenAndServe(":8000", mux); err != nil {
+	if err := http.ListenAndServe(":8000", handlerWithCORS); err != nil {
 		log.Fatalf("❌ Server failed: %v", err)
 	}
 }
