@@ -1,16 +1,17 @@
 package main
 
 import (
+	"backend/config"
 	"log"
 	"net/http"
 
 	"backend/api/common"
-	"backend/api/server"
 )
 
 func main() {
 	mux := http.NewServeMux()
 
+	queries := config.GenerateQueries()
 	// 🧠 Registering Server API Routes
 	// server.RegisterAlertRoutes(mux)
 	// server.RegisterBackupRoutes(mux)
@@ -31,7 +32,7 @@ func main() {
 
 	// 🛠️ Register Common Routes (Login, Settings, etc.)
 	//	common.RegisterSettingsRoutes(mux)
-	common.RegisterLoginRoute(mux)
+	common.RegisterLoginRoute(mux, queries)
 
 	log.Println("✅ SNSMS backend running on port 8000...")
 	if err := http.ListenAndServe(":8000", mux); err != nil {

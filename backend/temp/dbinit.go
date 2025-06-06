@@ -41,7 +41,7 @@ func CreateStructure() {
 	SELECT $1::text, $2::text, $3::text, $4::text
     WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = $3);`
 
-	_, err = db.ExecContext(context.Background(), insertUser, "Admin", "admin", "admin@example.com", string(hashedPassword))
+	_, err = db.ExecContext(context.Background(), insertUser, "admin", "admin", "admin@example.com", string(hashedPassword))
 	if err != nil {
 		log.Fatal("inserting user:", err)
 	}
