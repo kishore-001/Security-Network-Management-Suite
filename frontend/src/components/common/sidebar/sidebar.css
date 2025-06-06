@@ -1,0 +1,51 @@
+.sidebar {
+  width: 260px;
+  background: #0f172a;
+  padding: 250px 0 1rem; /* 250px top padding, 0 horizontal, 1rem bottom */
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-sizing: border-box; /* Ensures padding is included in height calculation */
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+/* Rest of your existing styles remain unchanged */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  color: #e2e8f0;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-item.settings-permanent {
+  background: #4b0082;
+  color: white;
+}
+
+.nav-item.settings-permanent:hover {
+  background: #5a1196;
+  color: white;
+}
+
+.nav-item.active:not(.settings-permanent) {
+  background: linear-gradient(to right, #4f46e5, #8b5cf6);
+  color: white;
+}
+
+.settings-spacer {
+  margin-top: 25px;
+}
