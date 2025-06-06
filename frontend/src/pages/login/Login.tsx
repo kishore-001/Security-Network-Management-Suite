@@ -14,25 +14,38 @@ const Login: React.FC = () => {
     setSuccess(false);
     setLoading(true);
 
-    // Simulate a backend delay
-    await new Promise((res) => setTimeout(res, 1000));
+    try {
+      const response = await fetch('http://localhost:8080/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    // Mock validation logic
-    if (!username || !password) {
-      setError('Username and password are required.');
-    } else if (username === 'admin' && password === 'admin123') {
-      // Successful login case
-      setSuccess(true);
-    } else {
-      // Failed login case
-      setError('Invalid username or password.');
+      const data = await response.json();
+
+      if (response.ok && data.status === 'ok') {
+        // Save token to localStorage
+        localStorage.setItem('token', data.token);
+        setSuccess(true);
+
+        // Optional: Redirect after short delay
+        setTimeout(() => {
+          window.location.href = '/dashboard'; // or use navigate() if using React Router
+        }, 1000);
+      } else if (response.status === 401) {
+        setError('Invalid username or password.');
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network error. Check your connection.');
     }
 
     setLoading(false);
   };
-
-
-  
 
   return (
     <>
@@ -59,9 +72,11 @@ const Login: React.FC = () => {
               <input
                 type="text"
                 id="username"
+                aria-label="Username"
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                autoFocus
               />
             </div>
 
@@ -73,6 +88,7 @@ const Login: React.FC = () => {
               <input
                 type="password"
                 id="password"
+                aria-label="Password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -84,7 +100,9 @@ const Login: React.FC = () => {
                 <input type="checkbox" style={{ marginRight: '6px' }} />
                 Remember me
               </label>
-              <a href="#">Forgot password?</a>
+              <a href="#" onClick={(e) => e.preventDefault()}>
+                Forgot password?
+              </a>
             </div>
 
             <button type="submit" disabled={loading}>
