@@ -1,15 +1,8 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
 # 🔧 SNSMS - Server and Network System Management Suite
 
 <div align="center">
 
 **A centralized web-based system for monitoring, configuring, and managing servers and network devices across enterprise environments**
-
-[
-[
-[
-[
 
 </div>
 
@@ -241,5 +234,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [⭐ Star this repo](https://github.com/yourusername/snsms) - [🐛 Report Bug](https://github.com/yourusername/snsms/issues) - [💡 Request Feature](https://github.com/yourusername/snsms/issues)
 
 Made with ❤️ for enterprise infrastructure management
-
-<
