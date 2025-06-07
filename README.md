@@ -74,8 +74,8 @@ SNSMS follows a modern, scalable architecture designed for enterprise environmen
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/snsms.git
-cd snsms
+https://github.com/kishore-001/Server-Network-Management-Suite.git
+cd Server-Network-Management-Suite
 
 # Install dependencies
 go mod tidy
