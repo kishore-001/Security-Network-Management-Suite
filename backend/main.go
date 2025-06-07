@@ -31,7 +31,7 @@ func main() {
 
 	// 🛠️ Register Common Routes (Login, Settings, etc.)
 	//	common.RegisterSettingsRoutes(mux)
-	common.RegisterLoginRoute(mux, queries)
+	common.RegisterAuthRoutes(mux, queries)
 	handlerWithCORS := config.CORS(mux)
 
 	log.Println("✅ SNSMS backend running on port 8000...")

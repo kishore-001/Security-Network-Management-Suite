@@ -1,7 +1,7 @@
-CREATE TABLE IF NOT EXISTS sessions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    session_token TEXT NOT NULL,
-    time_added TIMESTAMP NOT NULL DEFAULT NOW()
+CREATE TABLE user_sessions (
+    id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE REFERENCES users(name) ON DELETE CASCADE,  -- ✅ Now works!
+    refresh_token TEXT NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-

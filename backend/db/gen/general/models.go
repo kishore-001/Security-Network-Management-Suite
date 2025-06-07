@@ -18,17 +18,18 @@ type MacAccessStatus struct {
 	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 }
 
-type Session struct {
-	ID           uuid.UUID `db:"id" json:"id"`
-	UserID       uuid.UUID `db:"user_id" json:"user_id"`
-	SessionToken string    `db:"session_token" json:"session_token"`
-	TimeAdded    time.Time `db:"time_added" json:"time_added"`
-}
-
 type User struct {
 	ID           uuid.UUID `db:"id" json:"id"`
 	Name         string    `db:"name" json:"name"`
 	Role         string    `db:"role" json:"role"`
 	Email        string    `db:"email" json:"email"`
 	PasswordHash string    `db:"password_hash" json:"password_hash"`
+}
+
+type UserSession struct {
+	ID           int32     `db:"id" json:"id"`
+	Username     string    `db:"username" json:"username"`
+	RefreshToken string    `db:"refresh_token" json:"refresh_token"`
+	ExpiresAt    time.Time `db:"expires_at" json:"expires_at"`
+	CreatedAt    time.Time `db:"created_at" json:"created_at"`
 }

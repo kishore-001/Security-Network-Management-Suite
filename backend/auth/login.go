@@ -1,12 +1,13 @@
 package auth
 
 import (
-	db "backend/db/gen/general" // replace with your actual module path
+	db "backend/db/gen/general"
 	"context"
 	"database/sql"
 	"encoding/json"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"time"
 )
 
 type loginRequest struct {
@@ -15,13 +16,8 @@ type loginRequest struct {
 }
 
 type loginResponse struct {
-	Status string `json:"status"`
-	Token  string `json:"token,omitempty"`
-}
-
-func respondUnauthorized(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusUnauthorized)
-	json.NewEncoder(w).Encode(loginResponse{Status: "unauthorized"})
+	Status      string `json:"status"`
+	AccessToken string `json:"access_token,omitempty"`
 }
 
 func HandleLogin(dbQueries *db.Queries) http.HandlerFunc {
@@ -39,30 +35,71 @@ func HandleLogin(dbQueries *db.Queries) http.HandlerFunc {
 
 		user, err := dbQueries.GetUserByName(context.Background(), req.Username)
 		if err == sql.ErrNoRows {
-			respondUnauthorized(w)
+			http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 			return
 		} else if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			http.Error(w, "Internal error", http.StatusInternalServerError)
 			return
 		}
 
 		if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-			respondUnauthorized(w)
+			http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 			return
 		}
 
-		// Generate JWT token with username and role
-		token, err := GenerateJWTToken(req.Username, user.Role)
+		accessToken, err := GenerateAccessToken(req.Username, user.Role)
 		if err != nil {
-			http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+			http.Error(w, "Failed to generate access token", http.StatusInternalServerError)
 			return
 		}
 
-		resp := loginResponse{
-			Status: "ok",
-			Token:  token,
+		// 🔍 Check if user already has a valid refresh token
+		existingSession, err := dbQueries.GetValidRefreshTokenByUser(context.Background(), req.Username)
+
+		var refreshToken string
+
+		if err == sql.ErrNoRows {
+			// 🆕 No valid session exists, create new refresh token
+			refreshToken, err = GenerateRefreshToken()
+			if err != nil {
+				http.Error(w, "Failed to generate refresh token", http.StatusInternalServerError)
+				return
+			}
+
+			// Save new refresh token to DB
+			err = dbQueries.SaveRefreshToken(context.Background(), db.SaveRefreshTokenParams{
+				Username:     req.Username,
+				RefreshToken: refreshToken,
+				ExpiresAt:    time.Now().Add(7 * 24 * time.Hour),
+			})
+			if err != nil {
+				http.Error(w, "Failed to save session", http.StatusInternalServerError)
+				return
+			}
+		} else if err != nil {
+			// Database error
+			http.Error(w, "Internal error", http.StatusInternalServerError)
+			return
+		} else {
+			// ♻️ Valid session exists, reuse the existing refresh token
+			refreshToken = existingSession.RefreshToken
 		}
+
+		// Set refresh token as HttpOnly secure cookie
+		http.SetCookie(w, &http.Cookie{
+			Name:     "refresh_token",
+			Value:    refreshToken,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteStrictMode,
+			MaxAge:   7 * 24 * 60 * 60,
+		})
+
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		json.NewEncoder(w).Encode(loginResponse{
+			Status:      "ok",
+			AccessToken: accessToken,
+		})
 	}
 }
