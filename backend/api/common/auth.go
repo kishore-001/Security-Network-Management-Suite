@@ -9,6 +9,5 @@ import (
 func RegisterAuthRoutes(mux *http.ServeMux, queries *generaldb.Queries) {
 	mux.HandleFunc("/api/auth/login", auth.HandleLogin(queries))
 	mux.HandleFunc("/api/auth/refresh", auth.HandleRefresh(queries))
-	mux.HandleFunc("/api/auth/verify", auth.HandleVerify(queries))
 	mux.HandleFunc("/api/auth/logout", auth.HandleLogout(queries))
 }

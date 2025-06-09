@@ -8,34 +8,52 @@ import (
 )
 
 func main() {
-	mux := http.NewServeMux()
+	// Create separate muxes for different protection levels
+	publicMux := http.NewServeMux()
+	protectedMux := http.NewServeMux()
+	adminMux := http.NewServeMux()
 
 	queries := config.GenerateQueries()
-	// 🧠 Registering Server API Routes
-	// server.RegisterAlertRoutes(mux)
-	// server.RegisterBackupRoutes(mux)
-	// server.RegisterConfig1Routes(mux)
-	// server.RegisterConfig2Routes(mux)
-	// server.RegisterHealthRoutes(mux)
-	// server.RegisterLogRoutes(mux)
-	// server.RegisterOptimizeRoutes(mux)
 
-	// 🌐 Registering Network API Routes
-	// network.RegisterAlertRoutes(mux)
-	//	network.RegisterBackupRoutes(mux)
-	//	network.RegisterConfig1Routes(mux)
-	//	network.RegisterConfig2Routes(mux)
-	//	network.RegisterHealthRoutes(mux)
-	//	network.RegisterLogRoutes(mux)
-	//	network.RegisterOptimizeRoutes(mux)
+	// 🌐 Public routes (no authentication required)
 
-	// 🛠️ Register Common Routes (Login, Settings, etc.)
-	//	common.RegisterSettingsRoutes(mux)
-	common.RegisterAuthRoutes(mux, queries)
-	handlerWithCORS := config.CORS(mux)
+	common.RegisterAuthRoutes(publicMux, queries)
+
+	// 🔒 Protected routes (authentication required)
+
+	//  Server Protected Routes
+
+	//	server.RegisterHealthRoutes(protectedMux, queries)
+	//	server.RegisterLogRoutes(protectedMux, queries)
+
+	//  Network Protected Routes
+
+	//	network.RegisterHealthRoutes(protectedMux, queries)
+	//	network.RegisterLogRoutes(protectedMux, queries)
+
+	// 👑 Admin-only routes
+
+	//  Server Protected Routes
+
+	//	server.RegisterConfigRoutes(adminMux, queries)
+	//	server.RegisterBackupRoutes(adminMux, queries)
+
+	//  Network Protected Routes
+
+	//	network.RegisterConfigRoutes(adminMux, queries)
+	//	network.RegisterBackupRoutes(adminMux, queries)
+
+	// Create main mux and apply appropriate middlewares
+	mainMux := http.NewServeMux()
+
+	// Mount with different middleware chains
+	mainMux.Handle("/api/auth/", config.ApplyPublicMiddlewares(publicMux))
+	mainMux.Handle("/api/server/", config.ApplyProtectedMiddlewares(protectedMux))
+	mainMux.Handle("/api/network/", config.ApplyProtectedMiddlewares(protectedMux))
+	mainMux.Handle("/api/admin/", config.ApplyAdminMiddlewares(adminMux))
 
 	log.Println("✅ SNSMS backend running on port 8000...")
-	if err := http.ListenAndServe(":8000", handlerWithCORS); err != nil {
+	if err := http.ListenAndServe(":8000", mainMux); err != nil {
 		log.Fatalf("❌ Server failed: %v", err)
 	}
 }
