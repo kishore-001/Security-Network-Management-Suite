@@ -1,5 +1,11 @@
+import Config1 from "./../../components/server/config/config1/config1";
+
 function Config() {
-  return <div>Config</div>;
+  return (
+    <>
+      <Config1 />
+    </>
+  );
 }
 
 export default Config;

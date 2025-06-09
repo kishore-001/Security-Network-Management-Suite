@@ -13,22 +13,22 @@ packages:
     emit_db_tags: true
     emit_exact_table_names: false
 
-  # - name: "serverdb"
-  #   path: "./db/gen/server"
-  #   queries: "./query/server"
-  #   schema:
-  #     - "./schema/server/*.sql"
-  #   engine: "postgresql"
-  ##   emit_prepared_queries: false
-  #   emit_interface: false
-  #   emit_json_tags: true
-  #   emit_empty_slices: true
-  #   emit_db_tags: true
-  #  emit_exact_table_names: false
+  - name: "serverdb"
+    path: "./gen/server"
+    queries: "./query/server"
+    schema:
+      - "./schema/server/*.sql"
+    engine: "postgresql"
+    emit_prepared_queries: false
+    emit_interface: false
+    emit_json_tags: true
+    emit_empty_slices: true
+    emit_db_tags: true
+    emit_exact_table_names: false
 
   #
   # - name: "networkdb"
-  #   path: "./db/gen/network"
+  #   path: "./gen/network"
   #   queries: "./query/network"
   #   schema:
   #    - "./schema/network/*.sql"

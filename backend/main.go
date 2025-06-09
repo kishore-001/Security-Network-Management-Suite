@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/api/common"
+	"backend/api/server"
 	"backend/config"
 	"log"
 	"net/http"
@@ -13,16 +14,15 @@ func main() {
 	protectedMux := http.NewServeMux()
 	adminMux := http.NewServeMux()
 
+	// This is necessary for Database
 	queries := config.GenerateQueries()
 
 	// 🌐 Public routes (no authentication required)
-
 	common.RegisterAuthRoutes(publicMux, queries)
 
 	// 🔒 Protected routes (authentication required)
 
 	//  Server Protected Routes
-
 	//	server.RegisterHealthRoutes(protectedMux, queries)
 	//	server.RegisterLogRoutes(protectedMux, queries)
 
@@ -34,12 +34,10 @@ func main() {
 	// 👑 Admin-only routes
 
 	//  Common Admin Routes
-
 	common.RegisterSettingsRoutes(adminMux, queries)
 
 	//  Server Admin Routes
-
-	//	server.RegisterConfigRoutes(adminMux, queries)
+	server.RegisterConfig1Routes(adminMux, queries)
 	//	server.RegisterBackupRoutes(adminMux, queries)
 
 	//  Network Admin Routes
