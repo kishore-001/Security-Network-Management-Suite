@@ -11,6 +11,30 @@ import (
 	"github.com/google/uuid"
 )
 
+const addMacAccess = `-- name: AddMacAccess :one
+INSERT INTO mac_access_status (mac, status)
+VALUES ($1, $2)
+RETURNING id, mac, status, created_at, updated_at
+`
+
+type AddMacAccessParams struct {
+	Mac    string `db:"mac" json:"mac"`
+	Status string `db:"status" json:"status"`
+}
+
+func (q *Queries) AddMacAccess(ctx context.Context, arg AddMacAccessParams) (MacAccessStatus, error) {
+	row := q.db.QueryRowContext(ctx, addMacAccess, arg.Mac, arg.Status)
+	var i MacAccessStatus
+	err := row.Scan(
+		&i.ID,
+		&i.Mac,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (name, role, email, password_hash)
 VALUES ($1, $2, $3, $4)
@@ -46,4 +70,29 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 		&i.Email,
 	)
 	return i, err
+}
+
+const deleteUserByEmail = `-- name: DeleteUserByEmail :exec
+DELETE FROM users
+WHERE name = $1 AND password_hash = $2
+`
+
+type DeleteUserByEmailParams struct {
+	Name         string `db:"name" json:"name"`
+	PasswordHash string `db:"password_hash" json:"password_hash"`
+}
+
+func (q *Queries) DeleteUserByEmail(ctx context.Context, arg DeleteUserByEmailParams) error {
+	_, err := q.db.ExecContext(ctx, deleteUserByEmail, arg.Name, arg.PasswordHash)
+	return err
+}
+
+const removeMacAccess = `-- name: RemoveMacAccess :exec
+DELETE FROM mac_access_status
+WHERE mac = $1
+`
+
+func (q *Queries) RemoveMacAccess(ctx context.Context, mac string) error {
+	_, err := q.db.ExecContext(ctx, removeMacAccess, mac)
+	return err
 }
