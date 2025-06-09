@@ -7,7 +7,6 @@ package serverdb
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,18 +19,18 @@ RETURNING id, ip, tag, os, created_at
 `
 
 type CreateServerDeviceParams struct {
-	Ip          string         `db:"ip" json:"ip"`
-	Tag         sql.NullString `db:"tag" json:"tag"`
-	Os          sql.NullString `db:"os" json:"os"`
-	AccessToken string         `db:"access_token" json:"access_token"`
+	Ip          string `db:"ip" json:"ip"`
+	Tag         string `db:"tag" json:"tag"`
+	Os          string `db:"os" json:"os"`
+	AccessToken string `db:"access_token" json:"access_token"`
 }
 
 type CreateServerDeviceRow struct {
-	ID        uuid.UUID      `db:"id" json:"id"`
-	Ip        string         `db:"ip" json:"ip"`
-	Tag       sql.NullString `db:"tag" json:"tag"`
-	Os        sql.NullString `db:"os" json:"os"`
-	CreatedAt time.Time      `db:"created_at" json:"created_at"`
+	ID        uuid.UUID `db:"id" json:"id"`
+	Ip        string    `db:"ip" json:"ip"`
+	Tag       string    `db:"tag" json:"tag"`
+	Os        string    `db:"os" json:"os"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
 
 func (q *Queries) CreateServerDevice(ctx context.Context, arg CreateServerDeviceParams) (CreateServerDeviceRow, error) {
@@ -69,11 +68,11 @@ ORDER BY created_at ASC
 `
 
 type GetAllServerDevicesRow struct {
-	ID        uuid.UUID      `db:"id" json:"id"`
-	Ip        string         `db:"ip" json:"ip"`
-	Tag       sql.NullString `db:"tag" json:"tag"`
-	Os        sql.NullString `db:"os" json:"os"`
-	CreatedAt time.Time      `db:"created_at" json:"created_at"`
+	ID        uuid.UUID `db:"id" json:"id"`
+	Ip        string    `db:"ip" json:"ip"`
+	Tag       string    `db:"tag" json:"tag"`
+	Os        string    `db:"os" json:"os"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
 
 func (q *Queries) GetAllServerDevices(ctx context.Context) ([]GetAllServerDevicesRow, error) {
@@ -112,11 +111,11 @@ WHERE ip = $1
 `
 
 type GetServerDeviceByIPRow struct {
-	ID          uuid.UUID      `db:"id" json:"id"`
-	Ip          string         `db:"ip" json:"ip"`
-	Tag         sql.NullString `db:"tag" json:"tag"`
-	Os          sql.NullString `db:"os" json:"os"`
-	AccessToken string         `db:"access_token" json:"access_token"`
+	ID          uuid.UUID `db:"id" json:"id"`
+	Ip          string    `db:"ip" json:"ip"`
+	Tag         string    `db:"tag" json:"tag"`
+	Os          string    `db:"os" json:"os"`
+	AccessToken string    `db:"access_token" json:"access_token"`
 }
 
 func (q *Queries) GetServerDeviceByIP(ctx context.Context, ip string) (GetServerDeviceByIPRow, error) {

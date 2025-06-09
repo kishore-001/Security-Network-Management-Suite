@@ -20,13 +20,13 @@ type ServerAlert struct {
 }
 
 type ServerDevice struct {
-	ID          uuid.UUID      `db:"id" json:"id"`
-	Ip          string         `db:"ip" json:"ip"`
-	Tag         sql.NullString `db:"tag" json:"tag"`
-	Os          sql.NullString `db:"os" json:"os"`
-	AccessToken string         `db:"access_token" json:"access_token"`
-	CreatedAt   time.Time      `db:"created_at" json:"created_at"`
-	UpdatedAt   time.Time      `db:"updated_at" json:"updated_at"`
+	ID          uuid.UUID `db:"id" json:"id"`
+	Ip          string    `db:"ip" json:"ip"`
+	Tag         string    `db:"tag" json:"tag"`
+	Os          string    `db:"os" json:"os"`
+	AccessToken string    `db:"access_token" json:"access_token"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
 }
 
 type ServerLog struct {

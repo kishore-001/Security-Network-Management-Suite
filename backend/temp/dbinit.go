@@ -84,6 +84,25 @@ func main() {
 	}
 	fmt.Println("✅ Mac Address table created")
 
+	// 📊 Create server devices table with UNIQUE constraint on name
+	fmt.Println("📊 Creating server devices table...")
+	createServerDevices := `
+   CREATE TABLE IF NOT EXISTS server_devices (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ip VARCHAR(45) NOT NULL UNIQUE,
+    tag VARCHAR(100) NOT NULL DEFAULT '',  -- NOT NULL with default
+    os VARCHAR(100) NOT NULL DEFAULT '',   -- NOT NULL with default
+    access_token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);`
+
+	_, err = db.ExecContext(context.Background(), createServerDevices)
+	if err != nil {
+		log.Fatal("creating server devices table:", err)
+	}
+	fmt.Println("✅ server Devices table created")
+
 	// 🔑 Hash default admin password
 	fmt.Println("🔑 Creating default admin user...")
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)

@@ -15,10 +15,11 @@ func main() {
 	adminMux := http.NewServeMux()
 
 	// This is necessary for Database
-	queries := config.GenerateQueries()
+	generalqueries := config.GeneralQueries()
+	serverqueries := config.ServerQueries()
 
 	// 🌐 Public routes (no authentication required)
-	common.RegisterAuthRoutes(publicMux, queries)
+	common.RegisterAuthRoutes(publicMux, generalqueries)
 
 	// 🔒 Protected routes (authentication required)
 
@@ -34,10 +35,10 @@ func main() {
 	// 👑 Admin-only routes
 
 	//  Common Admin Routes
-	common.RegisterSettingsRoutes(adminMux, queries)
+	common.RegisterSettingsRoutes(adminMux, generalqueries)
 
 	//  Server Admin Routes
-	server.RegisterConfig1Routes(adminMux, queries)
+	server.RegisterConfig1Routes(adminMux, serverqueries)
 	//	server.RegisterBackupRoutes(adminMux, queries)
 
 	//  Network Admin Routes
