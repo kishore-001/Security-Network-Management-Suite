@@ -72,18 +72,13 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
-const deleteUserByEmail = `-- name: DeleteUserByEmail :exec
+const deleteUserByName = `-- name: DeleteUserByName :exec
 DELETE FROM users
-WHERE name = $1 AND password_hash = $2
+WHERE name = $1
 `
 
-type DeleteUserByEmailParams struct {
-	Name         string `db:"name" json:"name"`
-	PasswordHash string `db:"password_hash" json:"password_hash"`
-}
-
-func (q *Queries) DeleteUserByEmail(ctx context.Context, arg DeleteUserByEmailParams) error {
-	_, err := q.db.ExecContext(ctx, deleteUserByEmail, arg.Name, arg.PasswordHash)
+func (q *Queries) DeleteUserByName(ctx context.Context, name string) error {
+	_, err := q.db.ExecContext(ctx, deleteUserByName, name)
 	return err
 }
 

@@ -3,9 +3,9 @@ INSERT INTO users (name, role, email, password_hash)
 VALUES ($1, $2, $3, $4)
 RETURNING id, name, role, email;
 
--- name: DeleteUserByEmail :exec
+-- name: DeleteUserByName :exec
 DELETE FROM users
-WHERE name = $1 AND password_hash = $2;
+WHERE name = $1;
 
 -- name: AddMacAccess :one
 INSERT INTO mac_access_status (mac, status)

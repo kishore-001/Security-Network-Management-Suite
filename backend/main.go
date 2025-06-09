@@ -33,12 +33,16 @@ func main() {
 
 	// 👑 Admin-only routes
 
-	//  Server Protected Routes
+	//  Common Admin Routes
+
+	common.RegisterSettingsRoutes(adminMux, queries)
+
+	//  Server Admin Routes
 
 	//	server.RegisterConfigRoutes(adminMux, queries)
 	//	server.RegisterBackupRoutes(adminMux, queries)
 
-	//  Network Protected Routes
+	//  Network Admin Routes
 
 	//	network.RegisterConfigRoutes(adminMux, queries)
 	//	network.RegisterBackupRoutes(adminMux, queries)
