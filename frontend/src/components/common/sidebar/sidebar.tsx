@@ -6,7 +6,7 @@ import {
   FaHdd,
   FaSlidersH
 } from 'react-icons/fa';
-import './Sidebar.css';
+import './sidebar.css';
 
 const Sidebar: React.FC = () => {
   const [activeItem, setActiveItem] = useState('Settings');
