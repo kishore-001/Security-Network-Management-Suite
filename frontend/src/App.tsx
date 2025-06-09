@@ -7,7 +7,7 @@ import Log from "./pages/log/log";
 import Backup from "./pages/backup/backup";
 import Alert from "./pages/alert/alert";
 import Resource from "./pages/resource/resource";
-import Settings from "./pages/settings/settings";
+import Settings from "./pages/settings/SettingsPage";
 
 const App: React.FC = () => {
   return (
