@@ -1,0 +1,29 @@
+.server-overview {
+  background-color: #161f36;
+  margin-top: 40px;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.status-box {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.status {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.online {
+  color: #28c76f;
+}
+
+.uptime {
+  color: #00cfe8;
+}
+
+.users {
+  color: #df1edd;
+}
