@@ -1,4 +1,4 @@
-package health
+package optimisation
 
 import (
 	"context"
@@ -11,18 +11,18 @@ import (
 	serverdb "backend/db/gen/server"
 )
 
-type hostExtract5 struct {
+type hostExtract1 struct {
 	Host string `json:"host"`
 }
 
-func GetHealth(queries *serverdb.Queries) http.HandlerFunc {
+func GetServices(queries *serverdb.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
 
-		var req hostExtract5
+		var req hostExtract1
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Host == "" {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
@@ -37,7 +37,7 @@ func GetHealth(queries *serverdb.Queries) http.HandlerFunc {
 			return
 		}
 
-		clientURL := fmt.Sprintf("http://%s/client/health", req.Host)
+		clientURL := fmt.Sprintf("http://%s/client/service", req.Host)
 		clientReq, err := http.NewRequest("GET", clientURL, nil)
 		if err != nil {
 			http.Error(w, "Failed to create request to client", http.StatusInternalServerError)

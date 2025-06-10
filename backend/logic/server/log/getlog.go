@@ -1,4 +1,4 @@
-package health
+package log
 
 import (
 	"context"
@@ -15,7 +15,7 @@ type hostExtract5 struct {
 	Host string `json:"host"`
 }
 
-func GetHealth(queries *serverdb.Queries) http.HandlerFunc {
+func GetLog(queries *serverdb.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -37,7 +37,7 @@ func GetHealth(queries *serverdb.Queries) http.HandlerFunc {
 			return
 		}
 
-		clientURL := fmt.Sprintf("http://%s/client/health", req.Host)
+		clientURL := fmt.Sprintf("http://%s/client/log", req.Host)
 		clientReq, err := http.NewRequest("GET", clientURL, nil)
 		if err != nil {
 			http.Error(w, "Failed to create request to client", http.StatusInternalServerError)

@@ -39,6 +39,10 @@ func main() {
 
 	//  Server Admin Routes
 	server.RegisterConfig1Routes(adminMux, serverqueries)
+	server.RegisterConfig2Routes(adminMux, serverqueries)
+	server.RegisterHealth(adminMux, serverqueries)
+	server.RegisterLog(adminMux, serverqueries)
+	server.RegisterOptimisation(adminMux, serverqueries)
 	//	server.RegisterBackupRoutes(adminMux, queries)
 
 	//  Network Admin Routes

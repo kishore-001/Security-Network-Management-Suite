@@ -1,6 +1,7 @@
-package health
+package config2
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -11,19 +12,25 @@ import (
 	serverdb "backend/db/gen/server"
 )
 
-type hostExtract5 struct {
+type hostExtract2 struct {
 	Host string `json:"host"`
 }
 
-func GetHealth(queries *serverdb.Queries) http.HandlerFunc {
+func HandlePostInterface1(queries *serverdb.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
 
-		var req hostExtract5
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Host == "" {
+		bodyBytes, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Failed to read request body", http.StatusBadRequest)
+			return
+		}
+
+		var req hostExtract2
+		if err := json.Unmarshal(bodyBytes, &req); err != nil || req.Host == "" {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
@@ -37,8 +44,8 @@ func GetHealth(queries *serverdb.Queries) http.HandlerFunc {
 			return
 		}
 
-		clientURL := fmt.Sprintf("http://%s/client/health", req.Host)
-		clientReq, err := http.NewRequest("GET", clientURL, nil)
+		clientURL := fmt.Sprintf("http://%s/client/config2/restartinterface", req.Host)
+		clientReq, err := http.NewRequest("POST", clientURL, bytes.NewReader(bodyBytes))
 		if err != nil {
 			http.Error(w, "Failed to create request to client", http.StatusInternalServerError)
 			return
@@ -53,8 +60,12 @@ func GetHealth(queries *serverdb.Queries) http.HandlerFunc {
 		}
 		defer resp.Body.Close()
 
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(resp.StatusCode)
-		io.Copy(w, resp.Body)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			http.Error(w, "Failed to read response from client", http.StatusInternalServerError)
+			return
+		}
+		w.Write(body)
 	}
 }
