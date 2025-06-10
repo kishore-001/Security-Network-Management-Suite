@@ -36,7 +36,7 @@ const Health: React.FC = () => {
   ];
 
   return (
-    <div className="health-panel">
+    <div className="health-container">
       {stats.map((stat, index) => (
         <div className={`stat-card ${stat.color}`} key={index}>
           <div className="icon">{stat.icon}</div>

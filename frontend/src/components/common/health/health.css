@@ -1,17 +1,23 @@
-health.css
-/* health.css */
 
-.health-panel {
+/* health.css */
+.health-container {
+  background: #0A172C;
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
-  gap: 0.5rem;
-  max-width: 370px;
-  width: 100%;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  grid-template-rows: repeat(2, auto);  /* Two rows */
+  gap: 10px; /* spacing between cards */
+  justify-items: center;
+  align-items: center;
+  height: 40%;
+  margin-bottom: 0%;
+  padding: 10px; /* optional padding */
 }
 
 .stat-card {
-  background-color: #1e293b;
-  padding: 0.5rem;
+  width: 100%; /* Let the grid define the size */
+  height: 100%; /* Take up full grid cell */
+  background-color: #152235;
+  padding: 0.75rem;
   border-radius: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   display: flex;
