@@ -50,7 +50,7 @@ func HandleBasic(queries *serverdb.Queries) http.HandlerFunc {
 
 		// Prepare request to remote client
 		clientURL := fmt.Sprintf("http://%s/client/config1/basic", req.Host)
-		clientReq, err := http.NewRequest("POST", clientURL, nil)
+		clientReq, err := http.NewRequest("GET", clientURL, nil)
 		if err != nil {
 			http.Error(w, "Failed to create request", http.StatusInternalServerError)
 			return
@@ -88,4 +88,3 @@ func HandleBasic(queries *serverdb.Queries) http.HandlerFunc {
 		})
 	}
 }
-
