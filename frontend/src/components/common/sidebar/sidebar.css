@@ -1,14 +1,8 @@
 .sidebar {
-  width: 260px;
-  background: #0f172a;
-  padding: 250px 0 1rem; /* 250px top padding, 0 horizontal, 1rem bottom */
-  color: white;
-  font-family: 'Open Sans', sans-serif;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  box-sizing: border-box; /* Ensures padding is included in height calculation */
+  width: 100%;
+  background-color: #0A172C; 
+  padding-top: 1rem;
+  min-height: auto;
 }
 
 .nav-menu {
@@ -16,9 +10,10 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 0 1rem;
+  background-color: #0A172C; /* match panel */
 }
 
-/* Rest of your existing styles remain unchanged */
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -47,5 +42,5 @@
 }
 
 .settings-spacer {
-  margin-top: 25px;
+  margin-top: 25px;
 }
