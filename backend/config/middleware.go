@@ -1,6 +1,7 @@
 package config
 
 import (
+	generaldb "backend/db/gen/general"
 	"net/http"
 )
 
@@ -45,12 +46,14 @@ func ApplyProtectedMiddlewares(handler http.Handler) http.Handler {
 }
 
 // Apply middlewares for admin-only routes
-func ApplyAdminMiddlewares(handler http.Handler) http.Handler {
+func ApplyAdminMiddlewares(handler http.Handler, queries *generaldb.Queries) http.Handler {
 	return SecurityHeaders(
 		AppHeaders(
 			CORS(
-				JWTMiddleware(
-					AdminOnly(handler),
+				MacCheckerMiddleware(queries)(
+					JWTMiddleware(
+						AdminOnly(handler),
+					),
 				),
 			),
 		),

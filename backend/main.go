@@ -54,7 +54,7 @@ func main() {
 	mainMux.Handle("/api/auth/", config.ApplyPublicMiddlewares(publicMux))
 	mainMux.Handle("/api/server/", config.ApplyProtectedMiddlewares(protectedMux))
 	mainMux.Handle("/api/network/", config.ApplyProtectedMiddlewares(protectedMux))
-	mainMux.Handle("/api/admin/", config.ApplyAdminMiddlewares(adminMux))
+	mainMux.Handle("/api/admin/", config.ApplyAdminMiddlewares(adminMux, queries))
 
 	log.Println("✅ SNSMS backend running on port 8000...")
 	if err := http.ListenAndServe(":8000", mainMux); err != nil {

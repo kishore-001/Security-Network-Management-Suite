@@ -82,6 +82,21 @@ func (q *Queries) DeleteUserByName(ctx context.Context, name string) error {
 	return err
 }
 
+const isMacWhitelisted = `-- name: IsMacWhitelisted :one
+SELECT EXISTS (
+    SELECT 1
+    FROM mac_access_status
+    WHERE mac = $1 AND status = 'WHITELISTED'
+)
+`
+
+func (q *Queries) IsMacWhitelisted(ctx context.Context, mac string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isMacWhitelisted, mac)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const removeMacAccess = `-- name: RemoveMacAccess :exec
 DELETE FROM mac_access_status
 WHERE mac = $1
