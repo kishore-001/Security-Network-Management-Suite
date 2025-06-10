@@ -23,10 +23,18 @@ func HandleCommandExec(w http.ResponseWriter, r *http.Request) {
 	}
 
 	out, err := exec.Command("bash", "-c", req.Command).CombinedOutput()
+	response := map[string]string{
+		"output": string(out),
+	}
+	w.Header().Set("Content-Type", "application/json")
+
 	if err != nil {
-		http.Error(w, "Command execution failed: "+err.Error(), http.StatusInternalServerError)
-		return
+		// Still provide output, but with 500 status
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
 	}
 
-	w.Write(out)
+	json.NewEncoder(w).Encode(response)
 }
+
