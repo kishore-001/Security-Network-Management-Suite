@@ -69,6 +69,7 @@ func main() {
 	}
 	fmt.Println("✅ User_sessions table created")
 
+	// Create Mac Access Table
 	createMacAddressTable := `
   CREATE TABLE IF NOT EXISTS mac_access_status (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
