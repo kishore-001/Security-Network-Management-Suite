@@ -39,6 +39,10 @@ func main() {
 
 	//  Server Admin Routes
 	server.RegisterConfig1Routes(adminMux, serverqueries)
+	server.RegisterConfig2Routes(adminMux, serverqueries)
+	server.RegisterHealth(adminMux, serverqueries)
+	server.RegisterLog(adminMux, serverqueries)
+	server.RegisterOptimisation(adminMux, serverqueries)
 	//	server.RegisterBackupRoutes(adminMux, queries)
 
 	//  Network Admin Routes
@@ -53,7 +57,7 @@ func main() {
 	mainMux.Handle("/api/auth/", config.ApplyPublicMiddlewares(publicMux))
 	mainMux.Handle("/api/server/", config.ApplyProtectedMiddlewares(protectedMux))
 	mainMux.Handle("/api/network/", config.ApplyProtectedMiddlewares(protectedMux))
-	mainMux.Handle("/api/admin/", config.ApplyAdminMiddlewares(adminMux))
+	mainMux.Handle("/api/admin/", config.ApplyAdminMiddlewares(adminMux, generalqueries))
 
 	log.Println("✅ SNSMS backend running on port 8000...")
 	if err := http.ListenAndServe(":8000", mainMux); err != nil {
