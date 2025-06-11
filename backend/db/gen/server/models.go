@@ -11,12 +11,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type ServerAlert struct {
-	ID       uuid.UUID     `db:"id" json:"id"`
-	Severity string        `db:"severity" json:"severity"`
-	Content  string        `db:"content" json:"content"`
-	Time     time.Time     `db:"time" json:"time"`
-	DeviceID uuid.NullUUID `db:"device_id" json:"device_id"`
+type Alert struct {
+	ID       int32        `db:"id" json:"id"`
+	Host     string       `db:"host" json:"host"`
+	Severity string       `db:"severity" json:"severity"`
+	Content  string       `db:"content" json:"content"`
+	Time     sql.NullTime `db:"time" json:"time"`
 }
 
 type ServerDevice struct {
@@ -27,25 +27,4 @@ type ServerDevice struct {
 	AccessToken string    `db:"access_token" json:"access_token"`
 	CreatedAt   time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
-}
-
-type ServerLog struct {
-	ID        uuid.UUID      `db:"id" json:"id"`
-	TimeStamp time.Time      `db:"time_stamp" json:"time_stamp"`
-	LogIp     sql.NullString `db:"log_ip" json:"log_ip"`
-	LogLevel  sql.NullString `db:"log_level" json:"log_level"`
-	Message   sql.NullString `db:"message" json:"message"`
-	DeviceID  uuid.NullUUID  `db:"device_id" json:"device_id"`
-}
-
-type ServerLogInfo struct {
-	ID        uuid.UUID `db:"id" json:"id"`
-	TableName string    `db:"table_name" json:"table_name"`
-}
-
-type ServerLogVolume struct {
-	ID               uuid.UUID     `db:"id" json:"id"`
-	LogDate          time.Time     `db:"log_date" json:"log_date"`
-	VolumeOfRequests int32         `db:"volume_of_requests" json:"volume_of_requests"`
-	DeviceID         uuid.NullUUID `db:"device_id" json:"device_id"`
 }

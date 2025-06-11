@@ -62,17 +62,18 @@ func (q *Queries) DeleteServerDevice(ctx context.Context, ip string) error {
 }
 
 const getAllServerDevices = `-- name: GetAllServerDevices :many
-SELECT id, ip, tag, os, created_at
+SELECT id, ip, tag, os, created_at , access_token
 FROM server_devices 
 ORDER BY created_at ASC
 `
 
 type GetAllServerDevicesRow struct {
-	ID        uuid.UUID `db:"id" json:"id"`
-	Ip        string    `db:"ip" json:"ip"`
-	Tag       string    `db:"tag" json:"tag"`
-	Os        string    `db:"os" json:"os"`
-	CreatedAt time.Time `db:"created_at" json:"created_at"`
+	ID          uuid.UUID `db:"id" json:"id"`
+	Ip          string    `db:"ip" json:"ip"`
+	Tag         string    `db:"tag" json:"tag"`
+	Os          string    `db:"os" json:"os"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
+	AccessToken string    `db:"access_token" json:"access_token"`
 }
 
 func (q *Queries) GetAllServerDevices(ctx context.Context) ([]GetAllServerDevicesRow, error) {
@@ -90,6 +91,7 @@ func (q *Queries) GetAllServerDevices(ctx context.Context) ([]GetAllServerDevice
 			&i.Tag,
 			&i.Os,
 			&i.CreatedAt,
+			&i.AccessToken,
 		); err != nil {
 			return nil, err
 		}

@@ -26,10 +26,12 @@ func AppHeaders(next http.Handler) http.Handler {
 }
 
 // Apply middlewares for public routes (no JWT required)
-func ApplyPublicMiddlewares(handler http.Handler) http.Handler {
+func ApplyPublicMiddlewares(handler http.Handler, queries *generaldb.Queries) http.Handler {
 	return SecurityHeaders(
 		AppHeaders(
-			CORS(handler),
+			MacCheckerMiddleware(queries)(
+				CORS(handler),
+			),
 		),
 	)
 }
@@ -46,14 +48,12 @@ func ApplyProtectedMiddlewares(handler http.Handler) http.Handler {
 }
 
 // Apply middlewares for admin-only routes
-func ApplyAdminMiddlewares(handler http.Handler, queries *generaldb.Queries) http.Handler {
+func ApplyAdminMiddlewares(handler http.Handler) http.Handler {
 	return SecurityHeaders(
 		AppHeaders(
 			CORS(
-				MacCheckerMiddleware(queries)(
-					JWTMiddleware(
-						AdminOnly(handler),
-					),
+				JWTMiddleware(
+					AdminOnly(handler),
 				),
 			),
 		),

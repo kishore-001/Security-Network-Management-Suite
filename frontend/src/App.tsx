@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/login/Login";
 import Config from "./pages/config/config";
@@ -7,9 +6,9 @@ import Log from "./pages/log/log";
 import Backup from "./pages/backup/backup";
 import Alert from "./pages/alert/alert";
 import Resource from "./pages/resource/resource";
-import Settings from "./pages/settings/SettingsPage";
+import Settings from "./pages/settings/settings";
 
-const App: React.FC = () => {
+export default function App() {
   return (
     <Router>
       <Routes>
@@ -24,6 +23,4 @@ const App: React.FC = () => {
       </Routes>
     </Router>
   );
-};
-
-export default App;
+}

@@ -104,6 +104,22 @@ func main() {
 	}
 	fmt.Println("✅ server Devices table created")
 
+	createServerAlerts := `
+	CREATE TABLE alerts (
+    id SERIAL PRIMARY KEY,
+    host VARCHAR(45) NOT NULL,
+    severity TEXT NOT NULL CHECK (severity IN ('info', 'warning', 'critical')),
+    content TEXT NOT NULL,
+    time TIMESTAMPTZ DEFAULT now()
+  );
+	`
+
+	_, err = db.ExecContext(context.Background(), createServerAlerts)
+	if err != nil {
+		log.Fatal("creating server alerts table:", err)
+	}
+	fmt.Println("✅ server alerts table created")
+
 	// 🔑 Hash default admin password
 	fmt.Println("🔑 Creating default admin user...")
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)

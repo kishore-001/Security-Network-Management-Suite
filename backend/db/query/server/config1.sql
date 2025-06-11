@@ -8,7 +8,7 @@ DELETE FROM server_devices
 WHERE ip = $1;
 
 -- name: GetAllServerDevices :many
-SELECT id, ip, tag, os, created_at
+SELECT id, ip, tag, os, created_at , access_token
 FROM server_devices 
 ORDER BY created_at ASC;
 

@@ -1,12 +1,12 @@
 package server
 
 import (
-	generaldb "backend/db/gen/server"
+	serverdb "backend/db/gen/server"
 	"backend/logic/server/log"
 	"net/http"
 )
 
-func RegisterLog(mux *http.ServeMux, queries *generaldb.Queries) {
+func RegisterLogRoutes(mux *http.ServeMux, queries *serverdb.Queries) {
 	// GET-like operations via POST
-	mux.HandleFunc("/api/admin/server/log", log.GetLog(queries))
+	mux.HandleFunc("/api/server/log", log.GetLog(queries))
 }
