@@ -1,29 +1,30 @@
 .server-overview {
-  background-color: #161f36;
-  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  background-color: #1e293b;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 15px;
+  color: white;
+  font-size: 16px;
 }
 
-.status-box {
-  display: flex;
-  justify-content: space-around;
+.status-item {
   text-align: center;
 }
 
-.status {
+.status-item .label {
+  display: block;
+  color: #cbd5e1;
+  margin-bottom: 5px;
   font-weight: bold;
-  font-size: 18px;
 }
 
-.online {
-  color: #28c76f;
+.status-item .value {
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.uptime {
-  color: #00cfe8;
-}
-
-.users {
-  color: #df1edd;
+.status-item .online {
+  color: #22c55e;
 }

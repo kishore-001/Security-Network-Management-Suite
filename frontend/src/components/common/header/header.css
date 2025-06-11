@@ -1,139 +1,158 @@
-.snsms-header {
-  background-color: #0f172a;
-  height: 75px;
+.header-container {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
-  border-top: 1px solid #066df5;
-  border-bottom: 1px solid #066df5;
-  color: rgb(31, 10, 223);
-}
-
-/* Brand */
-.header-brand {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-}
-
-.logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: rgb(32, 6, 234);
-  margin: 0;
-}
-
-.title {
-  font: size 1.2 rem;
+  align-items: center;
+  background-color: #0f172a;
+  padding: 10px 20px;
   color: white;
-  margin: 0;
 }
 
-/* Buttons */
-.header-actions {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.action-btn {
+.header-left {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
-  color: white;
+  gap: 16px;
 }
 
-/* Hover state */
-.action-btn:hover {
+.logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6d28d9, #4f46e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.logo-letter {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.status-indicator {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 10px;
+  height: 10px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+}
+
+.brand-title {
+  font-weight: 600;
+  font-size: 18px;
+  color: #cbd5e1;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: -4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Server Dropdown */
+.server-dropdown-wrapper {
+  position: relative;
+}
+
+.server-dropdown {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  cursor: pointer;
+  width: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.dropdown-icon {
+  font-size: 12px;
+}
+
+.server-dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  width: 100px;
+  z-index: 999;
+}
+
+.server-dropdown-item {
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.server-dropdown-item:hover {
   background-color: #334155;
 }
 
-/* Active tab */
-.action-btn.active {
-  background-color: #6366f1;
-  color: white;
-}
-
-/* Alerts Badge */
-.action-btn.alerts {
+/* Alert */
+.alert-icon {
   position: relative;
+  background-color: #1e293b;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: white;
+  display: flex;
+  align-items: center;
 }
 
-.alert-badge {
+.alert-count {
   position: absolute;
-  top: -6px;
-  right: -8px;
-  background-color: #ef4444;
+  top: -4px;
+  right: -4px;
+  background-color: red;
   color: white;
-  font-size: 0.65rem;
-  padding: 2px 5px;
+  font-size: 10px;
+  padding: 2px 6px;
   border-radius: 50%;
 }
-/* Toggle Switch Container */
-/* Toggle container center */
-/* Toggle container */
-.toggle-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.alert-text {
+  font-size: 13px;
 }
 
-/* Wrapper bar */
-.toggle-wrapper {
-  position: relative;
-  width: 160px;
-  height: 40px;
+/* Toggle */
+.toggle-switch {
+  display: flex;
   background-color: #1e293b;
   border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  cursor: pointer;
-  color: white;
-  font-size: 0.8rem;
-  font-weight: 500;
   overflow: hidden;
 }
 
-/* Individual options */
 .toggle-option {
-  z-index: 2;
   display: flex;
   align-items: center;
-  gap: 4px;
-  width: 50%;
-  justify-content: center;
-  transition: color 0.3s ease;
+  gap: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #cbd5e1;
 }
 
-.toggle-icon {
-  font-size: 1rem;
+.active-network {
+  background-color: #3b82f6;
+  color: white;
 }
 
-/* The slider circle background */
-/* The slider circle background */
-.toggle-slider {
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: 4px;
-  width: 90px; /* Increased from 76px */
-  background-color: #38bdf8;
-  border-radius: 999px;
-  transition: transform 0.4s ease, background-color 0.3s ease;
-  z-index: 1;
-}
-
-/* Move the slider if server is active */
-.toggle-wrapper.server .toggle-slider {
-  transform: translateX(80px); /* Match the new width */
-  background-color: #34d399;
+.active-server {
+  background-color: #ef4444;
+  color: white;
 }

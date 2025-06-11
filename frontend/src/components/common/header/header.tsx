@@ -1,47 +1,83 @@
 import React, { useState } from 'react';
+import './Header.css';
 import { FaBell, FaNetworkWired, FaServer } from 'react-icons/fa';
-import './header.css';
+import { IoIosArrowDown } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 
-const TopNav: React.FC = () => {
-  const [toggleState, setToggleState] = useState<'network' | 'server'>('network');
+const Header: React.FC = () => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'network' | 'server'>('network');
+  const [selectedServer, setSelectedServer] = useState('Server 1');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const handleToggle = () => {
-    setToggleState(prev => (prev === 'network' ? 'server' : 'network'));
+  const servers = ['Server 1', 'Server 2', 'Server 3', 'Server 4'];
+
+  const toggleDropdown = () => setDropdownOpen((prev) => !prev);
+
+  const handleServerSelect = (server: string) => {
+    setSelectedServer(server);
+    setDropdownOpen(false);
   };
 
   return (
-    <header className="snsms-header">
-      {/* Left: Logo and Title */}
-      <div className="header-brand">
-        <h1 className="logo">SNSMS</h1>
-        <p className="title">Network Management Suite</p>
-      </div>
-
-      {/* Center: Fancy Toggle */}
-      <div className="toggle-container">
-        <div className={`toggle-wrapper ${toggleState}`} onClick={handleToggle}>
-          <div className="toggle-option network">
-            <FaNetworkWired className="toggle-icon" />
-            <span>Network</span>
-          </div>
-          <div className="toggle-option server">
-            <FaServer className="toggle-icon" />
-            <span>Server</span>
-          </div>
-          <div className="toggle-slider" />
+    <div className="header-container">
+      <div className="header-left">
+        <div className="logo-circle">
+          <span className="logo-letter">S</span>
+          <span className="status-indicator" />
+        </div>
+        <div>
+          <div className="brand-title">SNSMS</div>
+          <div className="brand-subtitle">Network Management Suite</div>
         </div>
       </div>
 
-      {/* Right: Alerts */}
-      <div className="header-actions">
-        <button className="action-btn alerts">
-          <FaBell className="icon" />
-          <span>Alerts</span>
-          <span className="alert-badge">3</span>
-        </button>
+      <div className="header-right">
+        <div className="server-dropdown-wrapper">
+          <div className="server-dropdown" onClick={toggleDropdown}>
+            {selectedServer}
+            <IoIosArrowDown className="dropdown-icon" />
+          </div>
+          {dropdownOpen && (
+            <div className="server-dropdown-menu">
+              {servers.map((server) => (
+                <div
+                  key={server}
+                  className="server-dropdown-item"
+                  onClick={() => handleServerSelect(server)}
+                >
+                  {server}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="alert-icon" onClick={()=> navigate("/alert")}>
+          <FaBell className="bell-icon" />
+                <span style={{ paddingLeft: '5px' }}>Alerts</span>
+                <span className="alert-count">3</span>
+        </div>
+
+        <div className="toggle-switch">
+          <div
+            className={`toggle-option ${activeTab === 'network' ? 'active-network' : ''}`}
+            onClick={() => setActiveTab('network')}
+          >
+            <FaNetworkWired />
+            <span>Network</span>
+          </div>
+          <div
+            className={`toggle-option ${activeTab === 'server' ? 'active-server' : ''}`}
+            onClick={() => setActiveTab('server')}
+          >
+            <FaServer />
+            <span>Server</span>
+          </div>
+        </div>
       </div>
-    </header>
+    </div>
   );
 };
 
-export default TopNav;
+export default Header;

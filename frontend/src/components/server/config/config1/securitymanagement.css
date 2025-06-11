@@ -1,7 +1,50 @@
-.security-mgmt {
-  background-color: #161f36;
-  padding: 20px;
-  border-radius: 12px;
-  width: 220px;
-  text-align: left;
+.security-management-container {
+  background-color: #1e2a38;
+  padding: 10px 15px;
+  border-radius: 16px;
+  width: 600px;
+  max-width: 90vw;
+  color: #fff;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.modal-subtitle {
+  color: #a0aec0;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.section {
+  margin-bottom: 25px;
+}
+
+.section h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+textarea,
+input[type="text"],
+input[type="password"] {
+  width: 400px;
+  padding: 8px 10px;
+  background-color: #1a202c;
+  color: white;
+  border: 1px solid #3b4a5a;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.upload-btn {
+   align-items: center;
+  width: 200px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #e2e8f0;
 }

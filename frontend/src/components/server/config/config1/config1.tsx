@@ -1,21 +1,29 @@
+import React from 'react';
 import './config1.css';
+import ServerConfiguration from './serverconfiguration';
 import CommandExecution from './commandexecution';
-import SecurityManagement from './securitymanagement';
-import ServerConfig from './serverconfig';
+ import UserManagement from './usermanagement';
+ import SecurityManagement from './securitymanagement';
 import ServerOverview from './serveroverview';
-import UserManagement from './usermanagement';
 
-const Config1 = () => {
+const Config1: React.FC = () => {
   return (
     <div className="config1-container">
-      <h1>Server Configuration Dashboard</h1>
-      <div className="grid">
-        <CommandExecution />
-        <SecurityManagement />
-        <ServerConfig />
-        <ServerOverview />
-        <UserManagement />
+      <div className="config1-header">
+        <div className="icon" />
+        <h1>Server Configuration Management</h1>
+        <p>
+          Comprehensive server administration, user management, and security configuration in one unified platform
+        </p>
       </div>
+      <div className="card-row">
+        
+       <ServerConfiguration />
+        <CommandExecution />
+        { <UserManagement /> }
+        { <SecurityManagement /> }
+      </div>
+      <ServerOverview />
     </div>
   );
 };

@@ -1,1 +1,72 @@
+/* ========== GLOBAL RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+html, body, #root {
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f172a; /* Full-page dark navy */
+  color: white;
+}
+
+/* ========== LAYOUT ========== */
+
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #0f172a; /* dark navy */
+}
+
+.header-container {
+  height: 80px;
+  background-color: #0f172a; /* Dark navy */
+  color: white;
+  border-bottom: 1px solid #1e293b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  z-index: 1000;
+}
+
+
+/* Sidebar + main content */
+.main-section {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  background-color: #0f172a; /* dark navy */
+}
+
+.sidebar-container {
+  width: 260px;
+  background-color: #1e293b; /* Sidebar slightly lighter dark */
+  color: #fff;
+  overflow-y: auto;
+  padding: 20px 16px;
+}
+
+.content-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #0f172a; /* Main content area: dark */
+  border-left: 1px solid #334155;
+  color: white;
+}
+
+/* Optional: Scrollbars */
+.content-container::-webkit-scrollbar,
+.sidebar-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-container::-webkit-scrollbar-thumb,
+.sidebar-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}

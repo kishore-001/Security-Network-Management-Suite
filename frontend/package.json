@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-progress": "^1.1.7",
     "@types/react-router-dom": "^5.3.3",
     "fa-icons": "^0.2.0",
+    "lucide-react": "^0.513.0",
+    "next": "^15.3.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
