@@ -51,7 +51,7 @@ const Config1: React.FC = () => {
       <div className="overview-wrapper">
         <ServerOverview />
       </div>
-    </>
+    </div>
   );
 };
 
