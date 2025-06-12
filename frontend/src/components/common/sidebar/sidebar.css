@@ -1,7 +1,7 @@
 
 .sidebar-container {
   width: 260px;
-  background-color: #0f172a; /* Dark blue base */
+  background-color: #111b31; /* Dark blue base */
   color: white;
   font-family: 'Segoe UI', sans-serif;
   padding: 1rem;
@@ -18,7 +18,7 @@
 }
 
 .metric-card {
-  background-color: #1e293b;
+  background-color: #111b31;
   padding: 0.75rem;
   border-radius: 12px;
   display: flex;

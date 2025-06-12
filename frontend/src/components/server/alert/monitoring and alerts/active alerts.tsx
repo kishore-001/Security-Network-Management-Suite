@@ -25,8 +25,10 @@ const ActiveAlerts: React.FC = () => {
     <>
       <div className="alerts-table-card">
         <div className="table-header">
-          <h3>🔺 Active Alerts</h3>
-          <button className="filter-btn">All Alerts ⌄</button>
+          <h3>🔺Active Alerts</h3>   </div>
+               <div className="table-header">
+
+          <button className="filter-btn">All Alerts </button>
         </div>
         <table className="alerts-table">
           <thead>

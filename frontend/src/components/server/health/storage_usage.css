@@ -1,0 +1,61 @@
+.storage-card {
+  background-color: #1e293b;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.storage-card .storage-icon {
+  background: linear-gradient(to right, #c084fc, #d946ef);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  margin-right: 1rem;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-body {
+  margin-top: 1rem;
+}
+
+.value {
+  font-size: 1.8rem;
+  margin: 0;
+  color: #22c55e;
+}
+
+.label {
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  color: #94a3b8;
+}
+
+.bar-track {
+  background-color: #334155;
+  height: 6px;
+  border-radius: 6px;
+  margin: 0.75rem 0;
+}
+
+.bar-fill {
+  height: 100%;
+  background-color: #22c55e;
+  border-radius: 6px;
+}
+
+.range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #cbd5e1;
+}
+
+
+.gradient_storage{
+  background: linear-gradient(135deg, #b6d40e, #8fd406); /* Blue to cyan */
+}
+

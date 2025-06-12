@@ -28,7 +28,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { label: 'Configuration', icon: 'config', path: '/', count: 12 },
   { label: 'Monitoring & Alerts', icon: 'reports', path: '/alert', count: 3, alert: true },
-  { label: 'Resource Optimization', icon: 'reports', path: '/resource', count: 8 },
+  { label: 'Resource Optimization', icon: 'resource', path: '/resource', count: 8 },
   { label: 'Logging Systems', icon: 'logg', path: '/log', count: 156 },
   { label: 'Backup Management', icon: 'backup', path: '/backup', count: 5 },
   { label: 'Health', icon: 'health', path: '/health' },

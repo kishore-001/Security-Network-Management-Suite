@@ -23,7 +23,7 @@ html, body, #root {
 
 .header-container {
   height: 80px;
-  background-color: #0f172a; /* Dark navy */
+  background-color: #0c1731; /* Dark navy */
   color: white;
   border-bottom: 1px solid #1e293b;
   display: flex;
@@ -44,7 +44,7 @@ html, body, #root {
 
 .sidebar-container {
   width: 260px;
-  background-color: #1e293b; /* Sidebar slightly lighter dark */
+  background-color:  #111b31; /* Sidebar slightly lighter dark */
   color: #fff;
   overflow-y: auto;
   padding: 20px 16px;

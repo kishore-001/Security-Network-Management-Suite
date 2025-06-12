@@ -2,53 +2,52 @@ import React from 'react';
 import './alertdetails.css';
 
 interface AlertDetailsProps {
-  alert: {
-    id: string;
-    severity: string;
-    title: string;
-    description: string;
-    time: string;
-    status: string;
-    assignedTo: string;
-  };
+  alert: any;
   onClose: () => void;
 }
 
 const AlertDetails: React.FC<AlertDetailsProps> = ({ alert, onClose }) => {
+  if (!alert) return null;
+
   return (
     <div className="modal-overlay">
       <div className="alert-modal">
         <div className="modal-header">
-          <h3>🔺 Alert Details</h3>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <div className="modal-header-content">
+            <div className="modal-title-row">
+              <span className="modal-icon">⚠️</span>
+              <strong>Alert Details</strong>
+            </div>
+            <p className="subtext">Detailed information about this alert</p>
+          </div><div>
+          <button className="close-btn" onClick={onClose}>×</button></div>
         </div>
-        <p className="modal-subtext">Detailed information about this alert</p>
 
         <div className="alert-title-row">
-          <span className="badge red">{alert.severity}</span>
-          <h4>{alert.title}</h4>
+          <span className="badge red">high</span>
+          <h4>CPU usage exceeded 90% on server-01</h4>
         </div>
 
         <div className="description-box">
-          {alert.description}
+          CPU usage exceeded 90% on server-01 for 10 minutes
         </div>
 
         <div className="alert-info-grid">
           <div>
             <label>Alert ID</label>
-            <p>{alert.id}</p>
+            <p>ALT-000001</p>
           </div>
           <div>
             <label>Detected</label>
-            <p>{alert.time}</p>
+            <p>10 minutes ago</p>
           </div>
           <div>
             <label>Status</label>
-            <p><span className="badge red">{alert.status}</span></p>
+            <p><span className="badge red">Active</span></p>
           </div>
           <div>
             <label>Assigned To</label>
-            <p>{alert.assignedTo}</p>
+            <p>Unassigned</p>
           </div>
         </div>
 
