@@ -1,0 +1,76 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: #1e293b;
+  padding: 24px;
+  border-radius: 12px;
+  width: 400px;
+  color: white;
+  box-shadow:
+    0 0 0 2px #00ff88,             /* Outer soft border */
+    0 0 2px #00ff88,              /* Main glow */
+    0 0 0px #00ff88,              /* Spread glow */
+    inset 0 0 10px #00ff88;        /* Inner glow */
+  border: 1px solid #00ff88;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+
+.modal-box h2 {
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+}
+
+.modal-box label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.modal-box input,
+.modal-box select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: white;
+  margin-top: 6px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.btn.add {
+  background-color: #16a34a;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.remove {
+  background-color: #dc2626;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}

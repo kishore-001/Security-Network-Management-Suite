@@ -58,7 +58,81 @@
 .config-management-container {
   margin-top: auto;
   padding-top: 1.5rem;
+  
   border-top: 1px solid rgba(148, 163, 184, 0.1);
 }
+.btn
 
-/* Button styles remain the same as before */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: rgba(16, 2, 49, 0.384);
+  border: 2px solid #ff00ff;
+  box-shadow: 0 0 2px #ff00ff, 0 0 25px #07e02c44;
+  padding: 20px;
+  width: 350px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: glowIn 0.3s ease-in-out;
+}
+
+@keyframes glowIn {
+  from {
+    box-shadow: 0 0 0px transparent;
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    box-shadow: 0 0 12px #07e02c88, 0 0 25px #07e02c44;
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px; /* Or whatever consistent height you want */
+  padding: 0 16px;
+  gap: 8px; /* Space between icon and text */
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn.update {
+  background-color: rgb(88, 20, 214);
+  color: white;
+}
+
+.btn.restore {
+  background-color: #07e02c; /* green */
+  color: white;
+}
+

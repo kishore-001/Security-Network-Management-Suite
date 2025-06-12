@@ -1,0 +1,43 @@
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.service-box {
+  background: #1e293b;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  color: #e2e8f0;
+  box-shadow: 0 0 10px #334155;
+  transition: transform 0.2s ease;
+}
+
+.service-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 15px #6366f1aa;
+}
+
+.service-icon {
+  font-size: 24px;
+  margin-bottom: 0.5rem;
+}
+
+.service-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.service-status {
+  font-size: 0.75rem;
+  color: #4ade80;
+}
+
+.service-meta {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
