@@ -1,5 +1,21 @@
-function Alert() {
-  return <div>Alert</div>;
+
+import Sidebar from "../../components/common/sidebar/sidebar";
+import Alerts from "../../components/server/alert/monitoring and alerts/alerts1";
+import Header from "../../components/common/header/header";
+import '../../App.css'; // Assuming App.css is at src/App.css
+
+function Config() {
+  return (
+    <div className="page-layout">
+      <Header />
+      <div className="main-section">
+        <Sidebar />
+        <div className="content-container">
+          <Alerts />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Alert;
+export default Config;

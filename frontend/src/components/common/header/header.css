@@ -1,121 +1,161 @@
-/* Header */
-.header {
-  width: 100%;
-  height: 64px;
-  background-color: #162335;
-  color: #fff;
+.header-container {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
+  align-items: center;
+  background-color: #0f172a;
+  padding: 10px 20px;
+  color: white;
 }
 
-/* Left */
 .header-left {
   display: flex;
-  align-items: baseline;
-  gap: 1rem;
-}
-
-.logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: rgb(32, 6, 234);
-  margin: 0;
-}
-
-.title {
-  font-size: 1.2rem;
-  margin: 0;
-}
-
-/* Right */
-.header-right {
-  display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 16px;
 }
 
-/* Alerts */
-.action-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
-  color: white;
-}
-
-.action-btn:hover {
-  background-color: #334155;
-}
-
-.action-btn.alerts {
-  position: relative;
-}
-
-.alert-badge {
-  position: absolute;
-  top: -6px;
-  right: -8px;
-  background-color: #ef4444;
-  color: white;
-  font-size: 0.65rem;
-  padding: 2px 5px;
-  border-radius: 50%;
-}
-
-/* Custom Toggle */
-.custom-toggle {
-  width: 120px;
+.logo-circle {
+  width: 40px;
   height: 40px;
-  background-color: #1e293b;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  position: relative;
-  cursor: pointer;
-  padding: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.custom-toggle.network {
-  background-color: #1e293b;
-}
-
-.custom-toggle.server {
-  background-color: #14532d;
-}
-
-.toggle-slider {
-  position: absolute;
-  width: 50%;
-  height: 32px;
-  background-color: #38bdf8;
-  border-radius: 999px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6d28d9, #4f46e5);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 1.2rem;
-  transition: transform 0.3s ease;
-  z-index: 1;
-  top: 4px;
-  left: 4px;
+  position: relative;
 }
 
-.custom-toggle.server .toggle-slider {
-  transform: translateX(100%);
+.logo-letter {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.status-indicator {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 10px;
+  height: 10px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+}
+
+.brand-title {
+  font-weight: 600;
+  font-size: 18px;
+  color: #cbd5e1;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: -4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Server Dropdown */
+.server-dropdown-wrapper {
+  position: relative;
+}
+
+.server-dropdown {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  cursor: pointer;
+  width: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.dropdown-icon {
+  font-size: 12px;
+}
+
+.server-dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  width: 100px;
+  z-index: 999;
+}
+
+.server-dropdown-item {
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.server-dropdown-item:hover {
+  background-color: #334155;
+}
+
+/* Alert */
+.alert-icon {
+  position: relative;
+  background-color: #1e293b;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.alert-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+.alert-text {
+  font-size: 13px;
+}
+
+/* Toggle */
+.toggle-switch {
+  display: flex;
+  background-color: #1e293b;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.toggle-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.active-network {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.active-server {
+  background-color: #ef4444;
+  color: white;
 }
 
 .toggle-labels {
