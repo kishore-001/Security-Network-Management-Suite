@@ -27,8 +27,8 @@ func main() {
 	api.RegisterOptimizeRoutes(mux)
 	api.RegisterLogRoutes(mux)
 
-	log.Println("Starting client server on port 8080...")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	log.Println("Starting client server on port 80...")
+	if err := http.ListenAndServe(":80", mux); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }

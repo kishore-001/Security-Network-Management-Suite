@@ -5,10 +5,12 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
+
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'network' | 'server'>('network');
   const [selectedServer, setSelectedServer] = useState('Server 1');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
 
   const servers = ['Server 1', 'Server 2', 'Server 3', 'Server 4'];
 
@@ -19,7 +21,10 @@ const Header: React.FC = () => {
     setDropdownOpen(false);
   };
 
+  const servers = ['Server A', 'Server B', 'Server C'];
+
   return (
+
     <div className="header-container">
       <div className="header-left">
         <div className="logo-circle">

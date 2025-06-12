@@ -1,3 +1,4 @@
+
 import Sidebar from "../../components/common/sidebar/sidebar";
 import Header from "../../components/common/header/header";
 import Config2 from "../../components/server/config/config1/config1";

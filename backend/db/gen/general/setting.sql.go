@@ -72,19 +72,29 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
-const deleteUserByEmail = `-- name: DeleteUserByEmail :exec
+const deleteUserByName = `-- name: DeleteUserByName :exec
 DELETE FROM users
-WHERE name = $1 AND password_hash = $2
+WHERE name = $1
 `
 
-type DeleteUserByEmailParams struct {
-	Name         string `db:"name" json:"name"`
-	PasswordHash string `db:"password_hash" json:"password_hash"`
+func (q *Queries) DeleteUserByName(ctx context.Context, name string) error {
+	_, err := q.db.ExecContext(ctx, deleteUserByName, name)
+	return err
 }
 
-func (q *Queries) DeleteUserByEmail(ctx context.Context, arg DeleteUserByEmailParams) error {
-	_, err := q.db.ExecContext(ctx, deleteUserByEmail, arg.Name, arg.PasswordHash)
-	return err
+const isMacWhitelisted = `-- name: IsMacWhitelisted :one
+SELECT EXISTS (
+    SELECT 1
+    FROM mac_access_status
+    WHERE mac = $1 AND status = 'WHITELISTED'
+)
+`
+
+func (q *Queries) IsMacWhitelisted(ctx context.Context, mac string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isMacWhitelisted, mac)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }
 
 const removeMacAccess = `-- name: RemoveMacAccess :exec

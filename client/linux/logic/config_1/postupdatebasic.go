@@ -24,46 +24,40 @@ func HandleBasicUpdate(w http.ResponseWriter, r *http.Request) {
 	// Parse the JSON request
 	var updateReq BasicUpdateRequest
 	if err := json.NewDecoder(r.Body).Decode(&updateReq); err != nil {
-		http.Error(w, "Failed to parse JSON request", http.StatusBadRequest)
+		writeStatus(w, false)
 		return
 	}
 
-	// Response data to track what was updated
-	updated := make(map[string]bool)
-	messages := make(map[string]string)
+	// Track update status
+	status := true
 
 	// Update hostname if provided
 	if updateReq.Hostname != "" {
 		if err := updateHostname(updateReq.Hostname); err != nil {
-			messages["hostname"] = fmt.Sprintf("Failed to update hostname: %v", err)
-			updated["hostname"] = false
-		} else {
-			messages["hostname"] = "Hostname updated successfully"
-			updated["hostname"] = true
+			status = false
 		}
 	}
 
 	// Update timezone if provided
 	if updateReq.Timezone != "" {
 		if err := updateTimezone(updateReq.Timezone); err != nil {
-			messages["timezone"] = fmt.Sprintf("Failed to update timezone: %v", err)
-			updated["timezone"] = false
-		} else {
-			messages["timezone"] = "Timezone updated successfully"
-			updated["timezone"] = true
+			status = false
 		}
 	}
 
-	// Prepare response
-	response := map[string]interface{}{
-		"updated":  updated,
-		"messages": messages,
-	}
+	writeStatus(w, status)
+}
 
-	// Send response
+func writeStatus(w http.ResponseWriter, success bool) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	status := "success"
+	if !success {
+		status = "failed"
+	}
+	json.NewEncoder(w).Encode(map[string]string{
+		"status": status,
+	})
 }
 
 // updateHostname changes the system hostname
@@ -85,8 +79,6 @@ func updateHostname(hostname string) error {
 	}
 
 	// Also update /etc/hosts to ensure the hostname resolves locally
-	// Note: This is a simplified approach; in production you might want to
-	// parse and update the file more carefully
 	hostsCmd := exec.Command("sed", "-i", fmt.Sprintf("s/127.0.1.1.*/127.0.1.1\t%s/", hostname), "/etc/hosts")
 	if err := hostsCmd.Run(); err != nil {
 		return fmt.Errorf("failed to update /etc/hosts: %w", err)
@@ -116,3 +108,4 @@ func updateTimezone(timezone string) error {
 
 	return nil
 }
+

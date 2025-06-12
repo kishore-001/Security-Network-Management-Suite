@@ -2,29 +2,37 @@ package main
 
 import (
 	"backend/api/common"
+	"backend/api/server"
 	"backend/config"
+	"backend/routine"
 	"log"
 	"net/http"
 )
 
 func main() {
+
 	// Create separate muxes for different protection levels
 	publicMux := http.NewServeMux()
 	protectedMux := http.NewServeMux()
 	adminMux := http.NewServeMux()
 
-	queries := config.GenerateQueries()
+	// This is necessary for Database
+	generalqueries := config.GeneralQueries()
+	serverqueries := config.ServerQueries()
+
+	// starting the go routines
+	healthMonitor := routine.NewHealthMonitor(serverqueries)
+	healthMonitor.Start()
 
 	// 🌐 Public routes (no authentication required)
-
-	common.RegisterAuthRoutes(publicMux, queries)
+	common.RegisterAuthRoutes(publicMux, generalqueries)
 
 	// 🔒 Protected routes (authentication required)
 
 	//  Server Protected Routes
-
-	//	server.RegisterHealthRoutes(protectedMux, queries)
-	//	server.RegisterLogRoutes(protectedMux, queries)
+	server.RegisterHealthRoutes(protectedMux, serverqueries)
+	server.RegisterAlertRoute(protectedMux, serverqueries)
+	server.RegisterLogRoutes(protectedMux, serverqueries)
 
 	//  Network Protected Routes
 
@@ -33,12 +41,16 @@ func main() {
 
 	// 👑 Admin-only routes
 
-	//  Server Protected Routes
+	//  Common Admin Routes
+	common.RegisterSettingsRoutes(adminMux, generalqueries)
 
-	//	server.RegisterConfigRoutes(adminMux, queries)
+	//  Server Admin Routes
+	server.RegisterConfig1Routes(adminMux, serverqueries)
+	server.RegisterConfig2Routes(adminMux, serverqueries)
+	server.RegisterOptimisation(adminMux, serverqueries)
 	//	server.RegisterBackupRoutes(adminMux, queries)
 
-	//  Network Protected Routes
+	//  Network Admin Routes
 
 	//	network.RegisterConfigRoutes(adminMux, queries)
 	//	network.RegisterBackupRoutes(adminMux, queries)
@@ -47,7 +59,7 @@ func main() {
 	mainMux := http.NewServeMux()
 
 	// Mount with different middleware chains
-	mainMux.Handle("/api/auth/", config.ApplyPublicMiddlewares(publicMux))
+	mainMux.Handle("/api/auth/", config.ApplyPublicMiddlewares(publicMux, generalqueries))
 	mainMux.Handle("/api/server/", config.ApplyProtectedMiddlewares(protectedMux))
 	mainMux.Handle("/api/network/", config.ApplyProtectedMiddlewares(protectedMux))
 	mainMux.Handle("/api/admin/", config.ApplyAdminMiddlewares(adminMux))
