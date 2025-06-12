@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Header.css';
+import './header.css';
 import { FaBell, FaNetworkWired, FaServer } from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +21,6 @@ const Header: React.FC = () => {
     setDropdownOpen(false);
   };
 
-  const servers = ['Server A', 'Server B', 'Server C'];
 
   return (
 

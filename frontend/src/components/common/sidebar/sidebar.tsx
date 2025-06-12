@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import './Sidebar.css';
+import './sidebar.css';
 import { icons } from '../../../assets/icons';
 
 interface Metric {

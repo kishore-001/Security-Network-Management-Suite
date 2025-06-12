@@ -2,7 +2,7 @@
 import Sidebar from "../../components/common/sidebar/sidebar";
 import Alerts from "../../components/server/alert/monitoring and alerts/alerts1";
 import Header from "../../components/common/header/header";
-import '../../App.css'; // Assuming App.css is at src/App.css
+import '../../App.css'; 
 
 function Config() {
   return (
