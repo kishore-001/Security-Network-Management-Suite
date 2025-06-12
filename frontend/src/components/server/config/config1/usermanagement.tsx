@@ -37,10 +37,12 @@ const UserManagement: React.FC = () => {
 
   return (
     <>
-      <div className="card" onClick={() => setShowModal(true)}>
-        <div className="card-icon purple"><FaUserPlus /></div>
-        <h2>User Management</h2>
-        <p>Manage server users, permissions, and access control</p>
+      <div className="card user-card" onClick={() => setShowModal(true)}>
+        <div className="user-icon">
+          <FaUserPlus size={20} color="white" />
+        </div>
+        <h3>User Management</h3>
+        <p>Manage server users and permissions</p>
       </div>
 
       {showModal && (

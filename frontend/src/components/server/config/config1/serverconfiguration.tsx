@@ -7,16 +7,17 @@ const ServerConfiguration: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
 
   const handleApply = (hostname: string, timezone: string) => {
-    // TODO: Replace this with backend integration
     console.log("Applied:", hostname, timezone);
     setShowModal(false);
   };
 
   return (
     <>
-      <div className="card" onClick={() => setShowModal(true)}>
-        <div className="card-icon blue"><FaServer /></div>
-        <h2>System Configuration</h2>
+      <div className="card server-card" onClick={() => setShowModal(true)}>
+        <div className="server-icon">
+          <FaServer size={20} color="white" />
+        </div>
+        <h3>System Configuration</h3>
         <p>Configure server hostname and timezone settings</p>
       </div>
 

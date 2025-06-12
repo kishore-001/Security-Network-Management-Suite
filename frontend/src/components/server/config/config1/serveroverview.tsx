@@ -4,17 +4,20 @@ import './serveroverview.css';
 const ServerOverview: React.FC = () => {
   return (
     <div className="server-overview">
-      <div className="status-item">
-        <span className="label">Server Status</span>
-        <span className="value online">Online</span>
-      </div>
-      <div className="status-item">
-        <span className="label">Uptime</span>
-        <span className="value">19:00:00</span>
-      </div>
-      <div className="status-item">
-        <span className="label">Active Users</span>
-        <span className="value">3</span>
+      <h2 className="overview-title">Server Overview</h2>
+      <div className="overview-metrics">
+        <div className="metric-block">
+          <div className="metric-value online">Online</div>
+          <div className="metric-label">Server Status</div>
+        </div>
+        <div className="metric-block">
+          <div className="metric-value uptime">19:00:00</div>
+          <div className="metric-label">Uptime</div>
+        </div>
+        <div className="metric-block">
+          <div className="metric-value users">3</div>
+          <div className="metric-label">Active Users</div>
+        </div>
       </div>
     </div>
   );

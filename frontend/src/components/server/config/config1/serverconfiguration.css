@@ -1,37 +1,66 @@
-.card {
-  background-color: #1e293b;
-  border-radius: 15px;
-  width: 250px;
-  padding: 20px;
-  text-align: left;
-  transition: transform 0.2s ease;
+.server-card {
+  background-color: #0f1c3b;
+  border-radius: 16px;
+  padding: 24px;
+  width: 260px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
 }
 
-.card:hover {
-  transform: translateY(-5px);
+.server-card:hover {
+  transform: translateY(-4px);
 }
 
-.card h2 {
-  font-size: 18px;
-  margin: 10px 0 5px;
-}
-
-.card p {
-  font-size: 14px;
-  color: #cbd5e1;
-}
-
-.card-icon {
-  font-size: 28px;
-  padding: 10px;
-  border-radius: 12px;
-  width: 40px;
-  height: 40px;
-  display: inline-block;
-  margin-bottom: 10px;
+.server-card h3 {
   color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 16px;
+  margin-bottom: 6px;
 }
 
-.card-icon.blue {
-  background-color: #0ea5e9;
+.server-card p {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.server-icon {
+  background: linear-gradient(to right, #0ea5e9, #38bdf8);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Inputs */
+input, select {
+  width: 100%;
+  padding: 10px;
+  background-color: #0f172a;
+  color: white;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #0ea5e9;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }

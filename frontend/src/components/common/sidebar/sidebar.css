@@ -1,6 +1,6 @@
 .sidebar-container {
   width: 260px;
-  background-color: #0f172a;
+  background-color: #0f172a; /* Dark blue base */
   color: white;
   font-family: 'Segoe UI', sans-serif;
   padding: 1rem;
@@ -8,6 +8,7 @@
   flex-direction: column;
 }
 
+/* Metrics section */
 .metrics-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -50,23 +51,13 @@
   color: #94a3b8;
 }
 
-/* Hover border for each metric */
-.metric-0:hover {
-  border-color: #22c55e;
-}
+/* Hover color border */
+.metric-0:hover { border-color: #22c55e; }
+.metric-1:hover { border-color: #0ea5e9; }
+.metric-2:hover { border-color: #facc15; }
+.metric-3:hover { border-color: #e879f9; }
 
-.metric-1:hover {
-  border-color: #0ea5e9;
-}
-
-.metric-2:hover {
-  border-color: #facc15;
-}
-
-.metric-3:hover {
-  border-color: #e879f9;
-}
-
+/* Menu section */
 .menu-section {
   display: flex;
   flex-direction: column;
@@ -93,9 +84,8 @@
   height: 15px;
   margin-right: 12px;
   object-fit: contain;
-  filter: brightness(0) invert(1); /* 👈 This makes black icons look white */
+  filter: brightness(0) invert(1); /* Makes black icons white */
 }
-
 
 .menu-label {
   flex: 1;
@@ -106,6 +96,7 @@
   padding: 0.25rem 0.5rem;
   border-radius: 999px;
   font-size: 0.75rem;
+  color: white;
 }
 
 .menu-count.alert {
@@ -113,19 +104,23 @@
   color: white;
 }
 
-/* Blue active */
+/* Gradient for active item */
 .menu-item.active-blue {
   background: linear-gradient(90deg, #6366f1, #a855f7);
   color: white;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
 }
-
-
 
 .menu-item.active-blue .menu-label {
   color: white;
 }
 
-/* Settings - default purple, but blue when active */
+.menu-item.active-blue .menu-count {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+/* Settings */
 .settings-button {
   color: white;
 }
@@ -135,7 +130,7 @@
   cursor: pointer;
 }
 
-
-
 .settings-button.active-blue {
-background: linear-gradient(90deg, #7c3aed, #c084fc);}
+  background: linear-gradient(90deg, #7c3aed, #c084fc);
+  color: white;
+}

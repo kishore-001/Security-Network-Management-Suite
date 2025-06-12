@@ -1,3 +1,46 @@
+/* ===== User Management Card Styles ===== */
+.user-card {
+  background-color: #0f1c3b;
+  border-radius: 16px;
+  padding: 24px;
+  width: 260px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.user-card:hover {
+  transform: translateY(-4px);
+}
+
+.user-card h3 {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+
+.user-card p {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.user-icon {
+  background: linear-gradient(to right, #8b5cf6, #ec4899);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Modal and Table Styles ===== */
 .user-input-row {
   display: flex;
   gap: 12px;
@@ -24,6 +67,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100px;
 }
 
 table {

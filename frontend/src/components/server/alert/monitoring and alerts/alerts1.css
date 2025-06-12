@@ -1,0 +1,18 @@
+.monitoring-dashboard {
+  padding: 2rem;
+  background-color: #0f172a;
+  color: #ffffff;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-bottom: 2rem;
+}
+
+.card-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}

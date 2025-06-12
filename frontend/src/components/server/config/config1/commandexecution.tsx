@@ -8,7 +8,6 @@ const CommandExecution: React.FC = () => {
   const [command, setCommand] = useState('');
 
   const handleExecute = () => {
-    // TODO: Connect to backend for actual command execution
     console.log("Command to execute:", command);
     setShowModal(false);
     setCommand('');
@@ -16,9 +15,11 @@ const CommandExecution: React.FC = () => {
 
   return (
     <>
-      <div className="card" onClick={() => setShowModal(true)}>
-        <div className="card-icon green"><FaTerminal /></div>
-        <h2>Command Execution</h2>
+      <div className="card command-card" onClick={() => setShowModal(true)}>
+        <div className="command-icon">
+          <FaTerminal size={20} color="white" />
+        </div>
+        <h3>Command Execution</h3>
         <p>Execute administrative commands remotely</p>
       </div>
 
