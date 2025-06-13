@@ -10,7 +10,7 @@ import cpu from './icon/cpu.svg'
 import memory from './icon/memory.svg'
 import box from './icon/box.svg'
 import network from './icon/network.svg'
-export  const icons = {
+const icons = {
     backup,
     config,
     health,
@@ -24,3 +24,4 @@ export  const icons = {
     box,
     network
 }
+export default icons;
