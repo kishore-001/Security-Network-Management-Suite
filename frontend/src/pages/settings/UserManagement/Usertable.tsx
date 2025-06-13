@@ -1,7 +1,18 @@
 import React from 'react';
 import './UserManagement.css';
 
-const UserTable: React.FC = () => {
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
+interface Props {
+  users: User[];
+}
+
+const UserTable: React.FC<Props> = ({ users }) => {
   return (
     <div className="table-wrapper">
       <h3>User Management</h3>
@@ -16,7 +27,14 @@ const UserTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {/* rows go here */}
+          {users.map((user, index) => (
+            <tr key={user.id}>
+              <td>{index + 1}</td>
+              <td>{user.name}</td>
+              <td>{user.role}</td>
+              <td>{user.email}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
