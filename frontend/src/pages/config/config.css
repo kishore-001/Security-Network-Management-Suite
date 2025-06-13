@@ -1,4 +1,4 @@
-.config-content {
+.config1-content {
   display: flex;
   flex-direction: column;
 }
@@ -20,29 +20,68 @@
   border-radius: 8px;
   display: flex;
   padding: 4px;
-  gap: 10px;
+  gap: 4px;
 }
 
 .config-feature-tab {
   background-color: transparent;
   border: none;
   color: #cbd5e1;
-  padding: 8px 18px;
+  padding: 10px 18px;
   border-radius: 6px;
   font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
-.config-feature-tab.config-feature-tab-active {
+.config-feature-tab:hover {
+  background-color: #334155;
+  color: #e2e8f0;
+}
+
+.config-feature-tab-active {
   background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.config-feature-tab-active:hover {
+  background: linear-gradient(to right, #2563eb, #7c3aed);
   color: white;
 }
 
 .config-tab-icon {
   font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .config-feature-tab {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .config-tab-icon {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .config-feature-tabs {
+    width: 100%;
+  }
+
+  .config-feature-tab {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
 }
