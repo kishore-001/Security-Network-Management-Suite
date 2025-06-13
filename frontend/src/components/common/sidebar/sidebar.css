@@ -1,12 +1,19 @@
-
 .sidebar-container {
-  width: 260px;
-  background-color: #0f172a; /* Dark blue base */
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--header-height));
+  background-color: #0f172a;
   color: white;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  border-right: 1px solid #182234;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
 }
 
 /* Metrics section */
@@ -15,6 +22,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
+  flex-shrink: 0;
 }
 
 .metric-card {
@@ -27,6 +35,7 @@
   gap: 0.25rem;
   border: 2px solid transparent;
   transition: border 0.3s ease;
+  min-height: 80px;
 }
 
 .metric-change {
@@ -34,63 +43,80 @@
   font-weight: bold;
 }
 
-.metric-change[data-type='positive'] {
+.metric-change[data-type="positive"] {
   color: #22c55e;
 }
 
-.metric-change[data-type='negative'] {
+.metric-change[data-type="negative"] {
   color: #f87171;
 }
 
 .metric-value {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
+  color: white;
 }
 
 .metric-label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #94a3b8;
+  line-height: 1.2;
 }
 
 /* Hover color border */
-.metric-0:hover { border-color: #22c55e; }
-.metric-1:hover { border-color: #0ea5e9; }
-.metric-2:hover { border-color: #facc15; }
-.metric-3:hover { border-color: #e879f9; }
+.metric-0:hover {
+  border-color: #22c55e;
+}
+.metric-1:hover {
+  border-color: #0ea5e9;
+}
+.metric-2:hover {
+  border-color: #facc15;
+}
+.metric-3:hover {
+  border-color: #e879f9;
+}
 
 /* Menu section */
 .menu-section {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .menu-item {
-
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: transparent;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem;
   border-radius: 10px;
   transition: background 0.3s ease;
+  cursor: pointer;
+  min-height: 44px;
 }
 
 .menu-item:hover {
   background-color: #1e293b;
-  cursor: pointer;
 }
 
 .menu-icon {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   margin-right: 12px;
   object-fit: contain;
-  filter: brightness(0) invert(1); /* Makes black icons white */
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
 }
 
 .menu-label {
   flex: 1;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menu-count {
@@ -99,6 +125,9 @@
   border-radius: 999px;
   font-size: 0.75rem;
   color: white;
+  min-width: 24px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .menu-count.alert {
@@ -125,15 +154,67 @@
 /* Settings */
 .settings-button {
   color: white;
+  margin-top: auto;
+  border-top: 1px solid #1e293b;
+  padding-top: 1rem;
 }
 
 .settings-button:hover {
   background-color: #1e293b;
-  cursor: pointer;
 }
 
 .settings-button.active-blue {
   background: linear-gradient(90deg, #7c3aed, #c084fc);
   color: white;
+}
 
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .sidebar-container {
+    width: 240px;
+    padding: 0.75rem;
+  }
+
+  .metric-value {
+    font-size: 1rem;
+  }
+
+  .menu-label {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 200px;
+    padding: 0.5rem;
+  }
+
+  .metrics-section {
+    gap: 0.5rem;
+  }
+
+  .metric-card {
+    padding: 0.5rem;
+    min-height: 70px;
+  }
+
+  .metric-value {
+    font-size: 0.9rem;
+  }
+
+  .metric-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar-container {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-container.mobile-open {
+    transform: translateX(0);
+  }
 }
