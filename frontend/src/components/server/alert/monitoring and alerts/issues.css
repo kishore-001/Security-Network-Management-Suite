@@ -1,8 +1,13 @@
 .issues-card {
   flex: 1;
-  background-color: #1e293b;
+  background-color:  #0f1c3b;
   padding: 1.5rem;
   border-radius: 12px;
+}
+
+.issues-card:hover {
+    transform: translateY(-7px);
+  box-shadow: 0 10px 16px rgba(40, 47, 82, 0.982);
 }
 
 .issues-card h3 {

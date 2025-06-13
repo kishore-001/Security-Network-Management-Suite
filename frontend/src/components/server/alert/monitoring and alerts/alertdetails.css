@@ -1,38 +1,72 @@
+/* Full-screen overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 23, 42, 0.85);
+  
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-}
+  box-shadow: 0 10px 16px rgba(40,47, 82, 0.982);
 
+}
+.alertdetails-card:hover {
+   transform: translateY(-7px);
+  box-shadow: 0 10px 16px rgba(48, 59, 119, 0.982);
+}
+/* Modal container */
 .alert-modal {
+  box-shadow: 0 10px 16px rgba(40, 50, 100, 0.982);
   background-color: #1e293b;
   width: 600px;
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 2rem;
   color: white;
   position: relative;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Top bar */
+/* Modal header */
 .modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
-.modal-header h3 {
+/* Header content block */
+.modal-header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-icon {
+  color: #f87171;
+  font-size: 1.2rem;
+}
+
+.modal-title-row strong {
   font-size: 1.25rem;
   font-weight: 600;
+  color: white;
 }
 
+.subtext {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+/* Close button (X) */
 .close-btn {
   background: none;
   border: none;
@@ -40,25 +74,19 @@
   color: #94a3b8;
   cursor: pointer;
   transition: color 0.2s ease;
+  padding-left: 100px;
 }
 
 .close-btn:hover {
   color: #f87171;
 }
 
-.modal-subtext {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  margin-top: 0.25rem;
-  margin-bottom: 1.5rem;
-}
-
-/* Title and severity */
+/* Alert title row */
 .alert-title-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1rem;
+  margin: 1.5rem 0 1rem;
 }
 
 .alert-title-row h4 {
@@ -66,29 +94,43 @@
   font-weight: 500;
 }
 
+/* Status badge */
 .badge {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: bold;
   text-transform: lowercase;
+  transition: all 0.3s ease;
 }
 
+/* High severity badge - default state */
 .red {
-  background-color: #dc2626;
+  background-color: #661515;
   color: white;
 }
 
-/* Description */
+/* On hover: transparent background, red text & border */
+.red:hover {
+  background-color: transparent;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  cursor: default;
+}
+.red_text{
+  color:red;
+}
+
+/* Alert description box */
 .description-box {
-  background-color: #334155;
-  border-radius: 8px;
+  background-color: #19222e;
+  border-radius: 6px;
   padding: 1rem;
   margin-bottom: 2rem;
   font-size: 0.95rem;
 }
 
-/* Info grid */
+/* Info section */
 .alert-info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -108,34 +150,46 @@
   font-size: 0.95rem;
 }
 
-/* Bottom buttons */
+/* Bottom buttons layout */
 .modal-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 60px;
 }
 
+/* Acknowledge Button */
 .acknowledge-btn {
   background-color: #f1f5f9;
-  color: #9ca3af;
-  border: none;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 600;
+  color: #2e333b;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 400;
   cursor: not-allowed;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+.acknowledge-btn:hover {
+  background-color: transparent;
+  color: #9ca3af;
+  border: 1px solid #cbd5e1;
+}
+
+/* Resolve Button */
 .resolve-btn {
   background: linear-gradient(to right, #6366f1, #9333ea);
   color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   font-weight: 400;
   cursor: pointer;
-  width: ;
+  transition: background-color 0.2s ease, color 0.2s ease, border 0.2s ease;
 }
 
 .resolve-btn:hover {
-  opacity: 0.95;
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid #fcfbfc;
 }
