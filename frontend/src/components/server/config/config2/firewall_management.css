@@ -1,0 +1,16 @@
+.firewall-card {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 1rem;
+}
+.firewall-card h3 {
+  margin-bottom: 0.75rem;
+  color: #f87171;
+}
+.firewall-card ul {
+  list-style: none;
+  padding: 0;
+}
+.firewall-card li {
+  margin-bottom: 0.5rem;
+}

@@ -1,11 +1,10 @@
 .alerts-table-card {
-  background-color: #1e293b;
+  background-color:  #0f1c3b;
   padding: 1.5rem;
   border-radius: 12px;
 }
 
-.table-header {
-  display: flex;
+.table-header { 
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;

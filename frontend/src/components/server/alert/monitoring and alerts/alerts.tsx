@@ -7,12 +7,12 @@ const Alerts: React.FC = () => {
       <h3>Alerts</h3>
       <div className="circle-alert">
         <div className="circle">1551</div>
-        <span>Total</span>
-      </div>
-      <div className="alert-counts">
-        <div className="red">1401 High</div>
-        <div className="yellow">39 Medium</div>
-        <div className="blue">111 Low</div>
+        <span><strong>Total</strong></span>
+        <span className="alert-counts">
+          <div style={{ fontSize: "20px" }} className="red_text"><strong>1401 High</strong></div>
+          <div style={{ fontSize: "20px" }} className="yellow"><strong>39 Medium</strong></div>
+          <div  style={{ fontSize: "20px" }} className="blue"><strong>111 Low</strong></div>
+        </span>
       </div>
     </div>
   );

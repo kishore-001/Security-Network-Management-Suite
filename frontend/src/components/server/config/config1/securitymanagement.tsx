@@ -55,12 +55,14 @@ const SecurityManagement = () => {
                 width: "500px",
                 background: "#f1f5f9",
                 color: "#1e293b",
+                paddingBottom: "10px",
+                paddingTop: "10px",
               }}
             >
               🔑 Upload SSH Key
             </button>
 
-            <input type="text" placeholder="Enter username" />
+            <input  style ={{ paddingTop:"10px"}}type="text" placeholder="Enter username" />
             <input type="password" placeholder="Current password" />
             <input type="password" placeholder="New password" />
             <input type="password" placeholder="Confirm password" />

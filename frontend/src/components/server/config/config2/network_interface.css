@@ -1,0 +1,16 @@
+.network-card {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 1rem;
+}
+.network-card h3 {
+  margin-bottom: 0.75rem;
+  color: #34d399;
+}
+.network-card ul {
+  list-style: none;
+  padding: 0;
+}
+.network-card li {
+  margin-bottom: 0.5rem;
+}
