@@ -1,0 +1,80 @@
+.health-card {
+  background-color: #1e293b;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.health-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.health-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  margin-right: 1rem;
+}
+
+.health-gradient-bg {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+}
+
+.health-cpu-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.health-value {
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.health-green {
+  color: #22c55e;
+}
+
+.health-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.health-bar-track {
+  background-color: #334155;
+  height: 6px;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  overflow: hidden;
+}
+
+.health-bar-fill {
+  background-color: #22c55e;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.health-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.health-expand {
+  color: #64748b;
+  font-size: 1.25rem;
+  cursor: pointer;
+}

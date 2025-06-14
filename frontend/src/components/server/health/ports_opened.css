@@ -1,0 +1,26 @@
+@import './cpu_usage.css';
+
+.health-ports {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.health-port-tag {
+  background-color: #1e40af;
+  color: white;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.health-port-critical {
+  background-color: #dc2626;
+}
+
+.health-more-ports {
+  margin-top: 0.5rem;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}

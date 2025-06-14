@@ -1,0 +1,41 @@
+.health-dashboard {
+  padding: 1.5rem;
+  color: white;
+  background-color: #0f172a;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.health-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.health-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.health-header p {
+  color: #94a3b8;
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+}
+
+.health-refresh {
+  background-color: #1d4ed8;
+  border: none;
+  padding: 0.6rem 1rem;
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}

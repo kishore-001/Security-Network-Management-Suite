@@ -10,10 +10,12 @@ const Config2: React.FC = () => {
     <div className="config2-container">
       <h2 className="config2-title">Network Configuration</h2>
       <div className="config2-grid">
-        <Basic />
-        <FirewallManagement />
-        <NetworkInterface />
+        <div className="config2-row-two">
+          <Basic />
+          <NetworkInterface />
+        </div>
         <RouteTable />
+        <FirewallManagement />
       </div>
     </div>
   );
