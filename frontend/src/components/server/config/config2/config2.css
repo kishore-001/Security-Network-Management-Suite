@@ -13,7 +13,17 @@
 }
 
 .config2-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
+
+.config2-row-two {
+  display: flex;
+  gap: 2rem;
+}
+
+.config2-row-two > * {
+  flex: 1;
+}
+

@@ -35,7 +35,7 @@
   padding: 20px;
   background-color: var(--content);
   border-left: 1px solid #334155;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* Responsive Design */

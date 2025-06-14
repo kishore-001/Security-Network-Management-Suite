@@ -1,0 +1,16 @@
+@import './cpu_usage.css'; /* Reuse core card styles */
+
+.health-network-traffic {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.health-network-traffic > div h3 {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.health-network-traffic .health-label {
+  font-size: 0.9rem;
+}
