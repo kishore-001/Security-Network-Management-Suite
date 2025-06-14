@@ -90,7 +90,6 @@ func HandlePasswordChange(queries *serverdb.Queries) http.HandlerFunc {
 
 		resp, err := httpClient.Do(clientReq)
 		if err != nil {
-			// Return error response if client unreachable
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(ClientResponsePassword{
 				Status: "failed",
@@ -109,10 +108,18 @@ func HandlePasswordChange(queries *serverdb.Queries) http.HandlerFunc {
 			return
 		}
 
+		// Check if client returned error status
+		if resp.StatusCode != http.StatusOK {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(ClientResponsePassword{
+				Status: "failed",
+			})
+			return
+		}
+
 		// Parse client response
 		var clientResp ClientResponsePassword
 		if err := json.Unmarshal(body, &clientResp); err != nil {
-			// If can't parse, assume failed
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(ClientResponsePassword{
 				Status: "failed",

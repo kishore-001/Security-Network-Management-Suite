@@ -31,8 +31,8 @@ const MacModal: React.FC<MacModalProps> = ({ onClose, onSave }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <form className="modal-content" onSubmit={handleSubmit}>
+    <div className="settings-modal-overlay">
+      <form className="settings-modal-content" onSubmit={handleSubmit}>
         <h3>Add MAC Address</h3>
 
         <input
@@ -55,7 +55,7 @@ const MacModal: React.FC<MacModalProps> = ({ onClose, onSave }) => {
           onChange={(e) => setNote(e.target.value)}
         />
 
-        <div className="modal-actions">
+        <div className="settings-modal-actions">
           <button type="submit" className="btn add">Save</button>
           <button type="button" className="btn remove" onClick={onClose}>Cancel</button>
         </div>

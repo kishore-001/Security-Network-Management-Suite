@@ -1,17 +1,20 @@
 import React from "react";
 import "./config1.css";
-import ServerConfiguration from "./serverconfiguration";
-import CommandExecution from "./commandexecution";
-import UserManagement from "./usermanagement";
-import SecurityManagement from "./securitymanagement";
-import ServerOverview from "./serveroverview";
+import ServerConfiguration from "./components/serverconfiguration";
+import CommandExecution from "./components/commandexecution";
+import UserManagement from "./components/servermanagement";
+import SecurityManagement from "./components/securitymanagement";
+import ServerOverview from "./components/serveroverview";
+import { FaServer } from "react-icons/fa";
 
 const Config1: React.FC = () => {
   return (
-    <div className="config1-container-2">
+    <div className="config1-main-container">
       {/* Title & Description */}
-      <div className="config1-header">
-        <div className="config-icon" />
+      <div className="config1-header-section">
+        <div className="config1-icon-wrapper">
+          <FaServer />
+        </div>
         <h1>Server Configuration Management</h1>
         <p>
           Comprehensive server administration, user management, and security
@@ -20,7 +23,7 @@ const Config1: React.FC = () => {
       </div>
 
       {/* Four Horizontal Cards */}
-      <div className="card-row-horizontal">
+      <div className="config1-cards-row-horizontal">
         <ServerConfiguration />
         <CommandExecution />
         <UserManagement />
@@ -28,7 +31,7 @@ const Config1: React.FC = () => {
       </div>
 
       {/* Overview */}
-      <div className="overview-wrapper">
+      <div className="config1-overview-wrapper">
         <ServerOverview />
       </div>
     </div>

@@ -16,6 +16,77 @@
   z-index: 100;
 }
 
+
+
+/* Add to sidebar.css */
+.metrics-header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  padding: 0 5px;
+}
+
+.metrics-refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  color: white;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s, box-shadow 0.2s, background 0.2s;
+  padding: 6px 14px;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.07);
+  letter-spacing: 0.5px;
+}
+
+.metrics-refresh-btn:hover {
+  opacity: 1;
+  background: linear-gradient(90deg, #7c3aed, #c084fc);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.13);
+}
+
+.metrics-refresh-btn:active {
+  opacity: 0.95;
+  background: linear-gradient(90deg, #6366f1, #7c3aed);
+}
+
+.metrics-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #334155;
+}
+
+.metrics-error {
+  text-align: center;
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: 5px;
+  padding: 5px;
+  background-color: rgba(255, 107, 107, 0.1);
+  border-radius: 4px;
+}
+
+/* Update metric cards for better error states */
+.metric-card .metric-value {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.metric-card .metric-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+
 /* Metrics section */
 .metrics-section {
   display: grid;
@@ -218,3 +289,5 @@
     transform: translateX(0);
   }
 }
+
+

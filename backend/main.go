@@ -59,7 +59,7 @@ func main() {
 	mainMux := http.NewServeMux()
 
 	// Mount with different middleware chains
-	mainMux.Handle("/api/auth/", config.ApplyPublicMiddlewares(publicMux, generalqueries))
+	mainMux.Handle("/api/auth/", config.ApplyPublicMiddlewares(publicMux))
 	mainMux.Handle("/api/server/", config.ApplyProtectedMiddlewares(protectedMux))
 	mainMux.Handle("/api/network/", config.ApplyProtectedMiddlewares(protectedMux))
 	mainMux.Handle("/api/admin/", config.ApplyAdminMiddlewares(adminMux))

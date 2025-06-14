@@ -1,22 +1,36 @@
+// components/common/header/header.tsx
 import React, { useState, useRef, useEffect } from "react";
 import "./header.css";
-import { FaBell, FaNetworkWired, FaServer } from "react-icons/fa";
+import { FaBell, FaNetworkWired, FaServer, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
+import { useRole } from "../../../hooks/useRole";
+import type { Device } from "../../../types/app";
+import { useAppContext } from "../../../context/AppContext";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState<"network" | "server">("network");
-  const [selectedServer, setSelectedServer] = useState("Server 1");
+  const { logout } = useAuth();
+  const { isAdmin, userInfo } = useRole();
+  const { 
+    activeMode, 
+    updateActiveMode, 
+    activeDevice, 
+    updateActiveDevice,
+    devices,
+    devicesLoading,
+    devicesError,
+    refreshDevices
+  } = useAppContext();
+  
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
-  // Create a ref for the dropdown wrapper
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
 
-  const servers = ["Server 1", "Server 2", "Server 3", "Server 4"];
-
-  // Route to title mapping
   const getPageTitle = (pathname: string): string => {
     const routeTitles: { [key: string]: string } = {
       "/": "Configuration",
@@ -32,98 +46,184 @@ const Header: React.FC = () => {
     return routeTitles[pathname] || "SNSMS";
   };
 
-  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
       }
     };
 
-    // Add event listener when dropdown is open
-    if (dropdownOpen) {
+    if (dropdownOpen || userDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
-    // Cleanup event listener
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownOpen]);
+  }, [dropdownOpen, userDropdownOpen]);
 
-  const toggleDropdown = () => setDropdownOpen((prev) => !prev);
-
-  const handleServerSelect = (server: string) => {
-    setSelectedServer(server);
+  const handleDeviceSelect = (device: Device) => {
+    updateActiveDevice(device);
     setDropdownOpen(false);
   };
 
+  const handleModeChange = (mode: 'server' | 'network') => {
+    console.log('Header: Changing mode to', mode);
+    updateActiveMode(mode);
+    setDropdownOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUserDropdownOpen(false);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  const handleRefreshDevices = async () => {
+    await refreshDevices();
+  };
+
+  const getDeviceDisplayText = () => {
+    if (devicesLoading) return 'Loading...';
+    if (devicesError) return 'Error loading devices';
+    if (devices.length === 0) return 'No devices found';
+    if (activeDevice) return activeDevice.tag;
+    return 'Select device';
+  };
+
+  const getUserDisplayName = () => {
+    return userInfo.username || (isAdmin ? 'Admin' : 'Viewer');
+  };
+
   return (
-    <div className="header-container">
-      <div className="header-left">
-        <div className="logo-circle">
-          <span className="logo-letter">S</span>
-          <span className="status-indicator" />
+    <div className="header-component-container">
+      <div className="header-component-left">
+        <div className="header-component-logo-circle">
+          <span className="header-component-logo-letter">S</span>
+          <span className="header-component-status-indicator" />
         </div>
-        <div className="brand-info">
-          <div className="brand-title">SNSMS</div>
-          <div className="brand-subtitle">Network Management Suite</div>
+        <div className="header-component-brand-info">
+          <div className="header-component-brand-title">SNMS</div>
+          <div className="header-component-brand-subtitle">Server And Network Management Suite</div>
         </div>
 
-        {/* Dynamic Page Title */}
-        <div className="page-title-section">
-          <div className="page-title">{getPageTitle(location.pathname)}</div>
+        <div className="header-component-page-title-section">
+          <div className="header-component-page-title">{getPageTitle(location.pathname)}</div>
         </div>
       </div>
 
-      <div className="header-right">
-        {/* Add ref to the dropdown wrapper */}
-        <div className="server-dropdown-wrapper" ref={dropdownRef}>
-          <div className="server-dropdown" onClick={toggleDropdown}>
-            {selectedServer}
+      <div className="header-component-right">
+        {/* Device Dropdown - Only for Admin */}
+        {isAdmin && (
+          <div className="header-component-server-dropdown-wrapper" ref={dropdownRef}>
+            <div className="header-component-server-dropdown" onClick={() => setDropdownOpen(!dropdownOpen)}>
+              {getDeviceDisplayText()}
+              <IoIosArrowDown
+                className={`header-component-dropdown-icon ${dropdownOpen ? "header-component-rotated" : ""}`}
+              />
+            </div>
+            {dropdownOpen && (
+              <div className="header-component-server-dropdown-menu">
+                {devicesLoading && (
+                  <div className="header-component-server-dropdown-item">Loading devices...</div>
+                )}
+                {devicesError && (
+                  <div className="header-component-server-dropdown-item">
+                    <span>Error: {devicesError}</span>
+                    <button onClick={handleRefreshDevices} style={{ marginLeft: '8px', fontSize: '12px' }}>
+                      Retry
+                    </button>
+                  </div>
+                )}
+                {!devicesLoading && !devicesError && devices.length === 0 && (
+                  <div className="header-component-server-dropdown-item">
+                    No devices registered for {activeMode} mode
+                  </div>
+                )}
+                {!devicesLoading && !devicesError && devices.map((device) => (
+                  <div
+                    key={device.id}
+                    className={`header-component-server-dropdown-item ${
+                      activeDevice?.id === device.id ? 'header-component-active-device' : ''
+                    }`}
+                    onClick={() => handleDeviceSelect(device)}
+                  >
+                    {device.tag} ({device.ip})
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Alerts */}
+        <div className="header-component-alert-icon" onClick={() => navigate("/alert")}>
+          <FaBell className="header-component-bell-icon" />
+          <span className="header-component-alert-text">Alerts</span>
+        </div>
+
+        {/* Network/Server Mode Toggle - Only for Admin */}
+        {isAdmin && (
+          <div className="header-component-toggle-switch">
+            <div
+              className={`header-component-toggle-option ${activeMode === "network" ? "header-component-active-network" : ""}`}
+              onClick={() => handleModeChange("network")}
+            >
+              <FaNetworkWired />
+              <span>Network</span>
+            </div>
+            <div
+              className={`header-component-toggle-option ${activeMode === "server" ? "header-component-active-server" : ""}`}
+              onClick={() => handleModeChange("server")}
+            >
+              <FaServer />
+              <span>Server</span>
+            </div>
+          </div>
+        )}
+
+        {/* User Dropdown */}
+        <div className="header-component-user-dropdown-wrapper" ref={userDropdownRef}>
+          <div className="header-component-user-dropdown" onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
+            <FaUser className="header-component-user-icon" />
+            <span className="header-component-user-text">{getUserDisplayName()}</span>
             <IoIosArrowDown
-              className={`dropdown-icon ${dropdownOpen ? "rotated" : ""}`}
+              className={`header-component-dropdown-icon ${userDropdownOpen ? "header-component-rotated" : ""}`}
             />
           </div>
-          {dropdownOpen && (
-            <div className="server-dropdown-menu">
-              {servers.map((server) => (
-                <div
-                  key={server}
-                  className="server-dropdown-item"
-                  onClick={() => handleServerSelect(server)}
-                >
-                  {server}
-                </div>
-              ))}
+          {userDropdownOpen && (
+            <div className="header-component-user-dropdown-menu">
+              {/* Profile Settings - Only for Admin */}
+              {isAdmin && (
+                <>
+                  <div 
+                    className="header-component-user-dropdown-item"
+                    onClick={() => {
+                      navigate("/settings");
+                      setUserDropdownOpen(false);
+                    }}
+                  >
+                    <FaUser className="header-component-dropdown-item-icon" />
+                    Profile Settings
+                  </div>
+                  <div className="header-component-dropdown-divider"></div>
+                </>
+              )}
+              <div 
+                className="header-component-user-dropdown-item header-component-logout-item"
+                onClick={handleLogout}
+              >
+                <FaSignOutAlt className="header-component-dropdown-item-icon" />
+                Logout
+              </div>
             </div>
           )}
-        </div>
-
-        <div className="alert-icon" onClick={() => navigate("/alert")}>
-          <FaBell className="bell-icon" />
-          <span style={{ paddingLeft: "5px" }}>Alerts</span>
-          <span className="alert-count">3</span>
-        </div>
-
-        <div className="toggle-switch">
-          <div
-            className={`toggle-option ${activeTab === "network" ? "active-network" : ""}`}
-            onClick={() => setActiveTab("network")}
-          >
-            <FaNetworkWired />
-            <span>Network</span>
-          </div>
-          <div
-            className={`toggle-option ${activeTab === "server" ? "active-server" : ""}`}
-            onClick={() => setActiveTab("server")}
-          >
-            <FaServer />
-            <span>Server</span>
-          </div>
         </div>
       </div>
     </div>

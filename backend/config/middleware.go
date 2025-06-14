@@ -1,7 +1,6 @@
 package config
 
 import (
-	generaldb "backend/db/gen/general"
 	"net/http"
 )
 
@@ -26,12 +25,10 @@ func AppHeaders(next http.Handler) http.Handler {
 }
 
 // Apply middlewares for public routes (no JWT required)
-func ApplyPublicMiddlewares(handler http.Handler, queries *generaldb.Queries) http.Handler {
+func ApplyPublicMiddlewares(handler http.Handler) http.Handler {
 	return SecurityHeaders(
 		AppHeaders(
-			MacCheckerMiddleware(queries)(
-				CORS(handler),
-			),
+			CORS(handler),
 		),
 	)
 }

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./login.css";
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock, FaShieldAlt } from "react-icons/fa";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -8,6 +8,17 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Get MAC address on component mount
+  useEffect(() => {
+    // Load remembered username if exists
+    const rememberedUser = localStorage.getItem("remember_user");
+    if (rememberedUser) {
+      setUsername(rememberedUser);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (): Promise<void> => {
     setError(null);
@@ -15,124 +26,178 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/login", {
+      // Get backend URL from environment variables
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const loginEndpoint = `${backendUrl}/api/auth/login`;
+
+      const response = await fetch(loginEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        credentials: "include", // Important: This allows cookies to be set by backend
+        body: JSON.stringify({ 
+          username: username.trim(), 
+          password: password.trim() 
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok && data.status === "ok") {
-        // Save token to localStorage
-        localStorage.setItem("token", data.token);
+        // Store access token in localStorage only
+        localStorage.setItem("access_token", data.access_token);
+        
+        // Refresh token is automatically stored in httpOnly cookies by the backend
+        // No need to manually handle refresh token here
+
+        // Handle remember me functionality
+        if (rememberMe) {
+          localStorage.setItem("remember_user", username);
+        } else {
+          localStorage.removeItem("remember_user");
+        }
+
         setSuccess(true);
 
-        // Optional: Redirect after short delay
+        // Redirect after short delay
         setTimeout(() => {
-          window.location.href = "/dashboard"; // or use navigate() if using React Router
-        }, 1000);
+          window.location.href = "/"; // Navigate to dashboard or main page
+        }, 1500);
+
       } else if (response.status === 401) {
         setError("Invalid username or password.");
+      } else if (response.status === 403) {
+        setError("Device not authorized. Please contact administrator.");
       } else {
-        setError("Something went wrong. Please try again.");
+        setError(data.message || "Something went wrong. Please try again.");
       }
     } catch (err) {
-      console.error(err);
-      setError("Network error. Check your connection.");
+      console.error('Login error:', err);
+      setError("Network error. Check your connection and try again.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <>
-      <div className="logo-outside">
-        <FaLock />
-      </div>
+    <div className="login-page-wrapper">
+      <div className="login-page-background">
+        <div className="login-page-logo-outside">
+          <FaShieldAlt className="login-page-logo-icon" />
+        </div>
 
-      <div className="login-container">
-        <div className="login-card">
-          <h1>SNSMS</h1>
-          <p className="subtext">Network Management Suite</p>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleLogin();
-            }}
-          >
-            <label htmlFor="username">Username</label>
-            <div className="input-group">
-              <span className="icon">
-                <FaUser />
-              </span>
-              <input
-                type="text"
-                id="username"
-                aria-label="Username"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoFocus
-              />
-            </div>
-
-            <label htmlFor="password">Password</label>
-            <div className="input-group">
-              <span className="icon">
+        <div className="login-page-container">
+          <div className="login-page-card">
+            <div className="login-page-header">
+              <div className="login-page-brand-icon">
                 <FaLock />
-              </span>
-              <input
-                type="password"
-                id="password"
-                aria-label="Password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="options-row">
-              <label>
-                <input type="checkbox" style={{ marginRight: "6px" }} />
-                Remember me
-              </label>
-              <a href="#" onClick={(e) => e.preventDefault()}>
-                Forgot password?
-              </a>
+              </div>
+              <h1 className="login-page-title">SNSMS</h1>
+              <p className="login-page-subtitle">Network Management Suite</p>
             </div>
 
-            <button type="submit" disabled={loading}>
-              {loading ? "Signing In..." : "Sign In"}
-            </button>
-          </form>
-
-          {/* Show success or error messages */}
-          {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
-          {success && (
-            <p style={{ color: "green", marginTop: "10px" }}>
-              Login successful! 🎉
-            </p>
-          )}
-
-          <div className="footer">
-            Don’t have an account? <a href="#">Contact administrator</a>
-            <br />
-            <span
-              style={{
-                fontSize: "0.75rem",
-                marginTop: "6px",
-                display: "inline-block",
+            <form
+              className="login-page-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleLogin();
               }}
             >
-              © 2025 SNSMS Network Management Suite. All rights reserved.
-            </span>
+              <div className="login-page-input-section">
+                <label htmlFor="username" className="login-page-label">
+                  Username
+                </label>
+                <div className="login-page-input-group">
+                  <span className="login-page-input-icon">
+                    <FaUser />
+                  </span>
+                  <input
+                    type="text"
+                    id="username"
+                    className="login-page-input"
+                    aria-label="Username"
+                    placeholder="Enter your username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    autoFocus
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="login-page-input-section">
+                <label htmlFor="password" className="login-page-label">
+                  Password
+                </label>
+                <div className="login-page-input-group">
+                  <span className="login-page-input-icon">
+                    <FaLock />
+                  </span>
+                  <input
+                    type="password"
+                    id="password"
+                    className="login-page-input"
+                    aria-label="Password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="login-page-options-row">
+                <label className="login-page-checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    className="login-page-checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <span className="login-page-checkbox-text">Remember me</span>
+                </label>
+              </div>
+
+              <button 
+                type="submit" 
+                className="login-page-submit-btn"
+                disabled={loading || !username.trim() || !password.trim()}
+              >
+                {loading ? (
+                  <>
+                    <span className="login-page-loading-spinner"></span>
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </button>
+            </form>
+
+            {/* Status Messages */}
+            {error && (
+              <div className="login-page-error-message">
+                <span className="login-page-error-icon">⚠️</span>
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="login-page-success-message">
+                <span className="login-page-success-icon">✅</span>
+                Login successful! Redirecting...
+              </div>
+            )}
+
+            <div className="login-page-footer">
+              <p className="login-page-copyright">
+                © 2025 SNSMS Network Management Suite. All rights reserved.
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

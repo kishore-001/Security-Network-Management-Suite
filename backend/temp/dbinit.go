@@ -69,22 +69,6 @@ func main() {
 	}
 	fmt.Println("✅ User_sessions table created")
 
-	// Create Mac Access Table
-	createMacAddressTable := `
-  CREATE TABLE IF NOT EXISTS mac_access_status (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    mac VARCHAR(17) NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('BLACKLISTED', 'WHITELISTED')),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-	);`
-
-	_, err = db.ExecContext(context.Background(), createMacAddressTable)
-	if err != nil {
-		log.Fatal("creating Mac Address table:", err)
-	}
-	fmt.Println("✅ Mac Address table created")
-
 	// 📊 Create server devices table with UNIQUE constraint on name
 	fmt.Println("📊 Creating server devices table...")
 	createServerDevices := `

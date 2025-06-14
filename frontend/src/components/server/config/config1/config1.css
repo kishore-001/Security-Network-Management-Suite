@@ -1,56 +1,24 @@
-.config1-container {
+/* config1.css */
+.config1-main-container {
   padding: 40px;
   background-color: #0f172a;
   color: #fff;
-  font-family: 'Inter', sans-serif;
-}
-
-.top-bar {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 40px;
-  margin-top: -30px;
-}
-
-.feature-tabs {
-  background-color: #1e293b;
-  border-radius: 8px;
-  display: flex;
-  padding: 4px;
-  gap: 10px;
-}
-
-.feature-tab {
-  background-color: transparent;
-  border: none;
-  color: #cbd5e1;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  flex-direction: column;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.3s;
+  justify-content: center;
 }
 
-.feature-tab.active {
-  background: linear-gradient(to right, #3b82f6, #8b5cf6);
-  color: white;
-}
-
-.tab-icon {
-  font-size: 16px;
-}
-
-.config1-header {
+.config1-header-section {
   text-align: center;
   margin-bottom: 40px;
 }
 
-.config-icon {
+.config1-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 60px;
   height: 60px;
   margin: 0 auto 20px;
@@ -58,30 +26,100 @@
   border-radius: 16px;
 }
 
-.config1-header h1 {
+.config1-icon-wrapper svg {
+  height: 2rem;
+  width: 2rem;
+}
+
+.config1-header-section h1 {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 10px;
+  color: #fff;
 }
 
-.config1-header p {
+.config1-header-section p {
   max-width: 600px;
   margin: 0 auto;
   color: #94a3b8;
   font-size: 16px;
+  line-height: 1.6;
 }
 
 /* Horizontal 1-row layout for 4 components */
-.card-row-horizontal {
+.config1-cards-row-horizontal {
   display: flex;
   justify-content: center;
   align-items: stretch;
   gap: 24px;
   padding: 0 20px;
   margin-bottom: 40px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
-.overview-wrapper {
+.config1-overview-wrapper {
+  display: flex;
+  align-items: center;
+  width: 70%;
+  justify-content: center;
   padding: 0 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .config1-main-container {
+    padding: 30px 20px;
+  }
+
+  .config1-cards-row-horizontal {
+    gap: 20px;
+  }
+
+  .config1-overview-wrapper {
+    width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .config1-main-container {
+    padding: 20px 15px;
+  }
+
+  .config1-header-section h1 {
+    font-size: 24px;
+  }
+
+  .config1-header-section p {
+    font-size: 14px;
+  }
+
+  .config1-cards-row-horizontal {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .config1-overview-wrapper {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .config1-main-container {
+    padding: 15px 10px;
+  }
+
+  .config1-icon-wrapper {
+    width: 50px;
+    height: 50px;
+  }
+
+  .config1-header-section h1 {
+    font-size: 20px;
+  }
+
+  .config1-header-section p {
+    font-size: 13px;
+  }
 }

@@ -15,4 +15,6 @@ func RegisterConfig1Routes(mux *http.ServeMux, queries *serverdb.Queries) {
 	mux.HandleFunc("/api/admin/server/config1/cmd", config1.HandleCommand(queries))
 	mux.HandleFunc("/api/admin/server/config1/pass", config1.HandlePasswordChange(queries))
 	mux.HandleFunc("/api/admin/server/config1/ssh", config1.HandleSSHKeyManagement(queries))
+	mux.HandleFunc("/api/admin/server/config1/overview", config1.HandleServerOverview(queries))
+
 }

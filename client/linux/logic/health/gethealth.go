@@ -53,21 +53,49 @@ type HealthStats struct {
 }
 
 // getActiveInterface returns the primary non-loopback, non-virtual, UP interface
+
 func getActiveInterface() (string, error) {
 	ifaces, err := net.Interfaces()
 	if err != nil {
 		return "", err
 	}
+
+	var candidates []net.Interface
+
 	for _, iface := range ifaces {
-		if iface.Flags&net.FlagLoopback != 0 ||
-			iface.Flags&net.FlagUp == 0 ||
-			strings.Contains(iface.Name, "docker") ||
-			strings.Contains(iface.Name, "veth") ||
-			strings.Contains(iface.Name, "br-") {
+		// Skip interfaces that are down or loopback
+		if iface.Flags&net.FlagUp == 0 || iface.Flags&net.FlagLoopback != 0 {
 			continue
 		}
-		return iface.Name, nil
+
+		// Skip virtual interfaces
+		if strings.Contains(iface.Name, "docker") ||
+			strings.Contains(iface.Name, "veth") ||
+			strings.Contains(iface.Name, "br-") ||
+			strings.Contains(iface.Name, "virbr") {
+			continue
+		}
+
+		// Check if interface has IP addresses
+		addrs, err := iface.Addrs()
+		if err != nil || len(addrs) == 0 {
+			continue
+		}
+
+		// Prioritize wireless interfaces
+		if strings.HasPrefix(iface.Name, "wl") || // Linux wireless (wlp3s0)
+			strings.HasPrefix(iface.Name, "en") { // macOS (en0 for WiFi)
+			return iface.Name, nil
+		}
+
+		candidates = append(candidates, iface)
 	}
+
+	// If no wireless found, return first candidate with IP
+	if len(candidates) > 0 {
+		return candidates[0].Name, nil
+	}
+
 	return "", nil
 }
 
@@ -176,4 +204,3 @@ func HandleHealthConfig(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(stats)
 }
-

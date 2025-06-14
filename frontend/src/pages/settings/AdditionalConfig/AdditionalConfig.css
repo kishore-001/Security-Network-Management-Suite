@@ -63,7 +63,7 @@
 }
 .btn
 
-.modal-overlay {
+.settings-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -76,7 +76,7 @@
   z-index: 999;
 }
 
-.modal-content {
+.settings-modal-content {
   background: rgba(16, 2, 49, 0.384);
   border: 2px solid #ff00ff;
   box-shadow: 0 0 2px #ff00ff, 0 0 25px #07e02c44;
@@ -102,7 +102,7 @@
   }
 }
 
-.modal-actions {
+.settings-modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;

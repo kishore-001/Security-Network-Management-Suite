@@ -11,13 +11,7 @@ VALUES ($1, $2, $3);
 SELECT username, expires_at 
 FROM user_sessions 
 WHERE refresh_token = $1 AND expires_at > now();
-CREATE TABLE user_sessions (
-    id SERIAL PRIMARY KEY,
-    username TEXT NOT NULL REFERENCES users(name) ON DELETE CASCADE,  -- ✅ Now works!
-    refresh_token TEXT NOT NULL UNIQUE,
-    expires_at TIMESTAMPTZ NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
+
 -- name: DeleteRefreshToken :exec
 DELETE FROM user_sessions 
 WHERE refresh_token = $1;
@@ -32,3 +26,5 @@ FROM user_sessions
 WHERE username = $1 AND expires_at > now()
 ORDER BY created_at DESC
 LIMIT 1;
+
+
