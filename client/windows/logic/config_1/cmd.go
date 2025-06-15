@@ -12,25 +12,40 @@ type CmdRequest struct {
 }
 
 func HandleCommandExec(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	if r.Method != http.MethodPost {
-		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Only POST allowed",
+		})
 		return
 	}
 
 	var req CmdRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Invalid input",
+		})
 		return
 	}
 
-	// Execute the command using Windows shell
 	cmd := exec.Command("cmd", "/C", req.Command)
-	out, err := cmd.CombinedOutput()
+	_, err := cmd.CombinedOutput()
 	if err != nil {
-		http.Error(w, "Command execution failed: "+strings.TrimSpace(err.Error()), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Command execution failed: " + strings.TrimSpace(err.Error()),
+		})
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write(out)
+	// POST success response
+	json.NewEncoder(w).Encode(map[string]string{
+		"status": "success",
+	})
 }

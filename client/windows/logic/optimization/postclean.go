@@ -7,10 +7,10 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"time"
 )
 
 // cleanDir tries to remove all files/subfolders in a directory (but not the dir itself)
-// It continues cleaning even if some files fail and returns combined errors.
 func cleanDir(path string) error {
 	dir, err := os.Open(path)
 	if err != nil {
@@ -28,7 +28,6 @@ func cleanDir(path string) error {
 		fullpath := filepath.Join(path, name)
 		err = os.RemoveAll(fullpath)
 		if err != nil {
-			// Log and accumulate the error, but continue cleaning others
 			fmt.Printf("Failed to remove %s: %v\n", fullpath, err)
 			if finalErr == nil {
 				finalErr = fmt.Errorf("%s (%v)", fullpath, err)
@@ -75,9 +74,7 @@ func HandleFileClean(w http.ResponseWriter, r *http.Request) {
 	var failed []string
 
 	for _, dir := range dirs {
-		// Check if directory exists before cleaning
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
-			// Directory doesn't exist, skip it silently or log
 			continue
 		}
 
@@ -90,15 +87,15 @@ func HandleFileClean(w http.ResponseWriter, r *http.Request) {
 	}
 
 	status := "success"
-	message := fmt.Sprintf("Cleaned: %v", cleaned)
 	if len(failed) > 0 {
 		status = "partial"
-		message = fmt.Sprintf("Cleaned: %v. Failed: %v", cleaned, failed)
 	}
 
 	resp := map[string]interface{}{
-		"status":  status,
-		"message": message,
+		"status":    status,
+		"cleaned":   cleaned,
+		"failed":    failed,
+		"timestamp": time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	json.NewEncoder(w).Encode(resp)

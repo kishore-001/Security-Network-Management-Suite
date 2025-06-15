@@ -35,14 +35,9 @@ func HandleFileInfo(w http.ResponseWriter, r *http.Request) {
 
 	usr, err := user.Current()
 	if err != nil {
-		http.Error(w, "Cannot get current user", http.StatusInternalServerError)
+		sendFileInfoError(w, "Cannot get current user", err)
 		return
 	}
-
-	// On Windows, common temp directories are:
-	// 1. User temp directory from environment variables (TEMP or TMP)
-	// 2. Windows temp directory (C:\Windows\Temp)
-	// 3. User cache directory (if you want to keep .cache inside user profile)
 
 	userTemp := os.Getenv("TEMP")
 	if userTemp == "" {
@@ -54,7 +49,6 @@ func HandleFileInfo(w http.ResponseWriter, r *http.Request) {
 
 	windowsTemp := filepath.Join(os.Getenv("SystemRoot"), "Temp")
 	if windowsTemp == "" {
-		// fallback to default path
 		windowsTemp = `C:\Windows\Temp`
 	}
 
@@ -74,10 +68,26 @@ func HandleFileInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := map[string]interface{}{
-		"folders": dirs,
-		"sizes":   sizes,
-		"failed":  failed,
+		"status":  "success",
+		"message": "Directory sizes fetched",
+		"data": map[string]interface{}{
+			"folders": dirs,
+			"sizes":   sizes,
+			"failed":  failed,
+		},
 	}
 
 	json.NewEncoder(w).Encode(resp)
+}
+
+// sendFileInfoError sends a standardized error JSON response
+func sendFileInfoError(w http.ResponseWriter, msg string, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":  "failed",
+		"message": msg,
+		"data": map[string]string{
+			"details": err.Error(),
+		},
+	})
 }
