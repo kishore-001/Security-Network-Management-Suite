@@ -1,21 +1,23 @@
-
+// pages/alert/alert.tsx
 import Sidebar from "../../components/common/sidebar/sidebar";
-import Alerts from "../../components/server/alert/monitoring and alerts/alerts1";
+import AlertDashboard from "../../components/server/alert/AlertDashboard";
 import Header from "../../components/common/header/header";
-import '../../App.css'; 
+import './alert.css';
 
-function Config() {
+function AlertPage() {
   return (
-    <div className="page-layout">
+    <>
       <Header />
-      <div className="main-section">
+      <div className="container">
         <Sidebar />
-        <div className="content-container">
-          <Alerts />
+        <div className="content">
+          <div className="alert-main-content">
+            <AlertDashboard />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default Config;
+export default AlertPage;

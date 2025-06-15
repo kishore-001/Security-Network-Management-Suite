@@ -8,14 +8,8 @@ func CORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
 
-		allowedOrigins := map[string]bool{
-			"http://localhost:5173": true,
-			"http://127.0.0.1:5173": true,
-			// Add production frontend URL here
-			"https://your-frontend.example.com": true,
-		}
-
-		if allowedOrigins[origin] {
+		// Allow all origins dynamically ONLY if Origin header exists
+		if origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")

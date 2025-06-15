@@ -19,15 +19,12 @@ function Config() {
 
   // Reset tab when mode changes (optional)
   useEffect(() => {
-    console.log('Config component detected mode change:', activeMode);
     setActiveTab("general");
   }, [activeMode]);
 
   const handleTabClick = (tab: "general" | "advanced") => {
     setActiveTab(tab);
   };
-
-  console.log('Config rendering with mode:', activeMode); // Debug log
 
   const renderServerComponents = () => (
     <>

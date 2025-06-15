@@ -65,7 +65,7 @@ func main() {
 	mainMux.Handle("/api/admin/", config.ApplyAdminMiddlewares(adminMux))
 
 	log.Println("✅ SNSMS backend running on port 8000...")
-	if err := http.ListenAndServe(":8000", mainMux); err != nil {
+	if err := http.ListenAndServe("0.0.0.0:8000", mainMux); err != nil {
 		log.Fatalf("❌ Server failed: %v", err)
 	}
 }
