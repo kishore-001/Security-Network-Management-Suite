@@ -21,11 +21,11 @@ func HandleRestartInterfaces(w http.ResponseWriter, r *http.Request) {
 
 	interfaces, err := net.Interfaces()
 	if err != nil {
-		sendError1(w, "Failed to get network interfaces", err)
+		sendRestartError(w, "Failed to get network interfaces", err)
 		return
 	}
 
-	restartedInterfaces := []string{}
+	var restartedInterfaces []string
 
 	for _, iface := range interfaces {
 		// Skip loopback and virtual interfaces
@@ -46,48 +46,51 @@ func HandleRestartInterfaces(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	response := map[string]interface{}{
-		"status":     "success",
-		"message":    fmt.Sprintf("Restarted %d interfaces", len(restartedInterfaces)),
-		"interfaces": restartedInterfaces,
+	status := "failed"
+	msg := "No interfaces were restarted"
+	if len(restartedInterfaces) > 0 {
+		status = "success"
+		msg = fmt.Sprintf("Restarted %d interface(s)", len(restartedInterfaces))
 	}
 
-	if len(restartedInterfaces) == 0 {
-		response["status"] = "warning"
-		response["message"] = "No interfaces were restarted"
+	resp := map[string]interface{}{
+		"status":  status,
+		"message": msg,
+		"data": map[string]interface{}{
+			"interfaces": restartedInterfaces,
+		},
 	}
 
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(resp)
 }
 
 // restartInterfaceWindows disables and re-enables a network adapter using PowerShell
 func restartInterfaceWindows(interfaceName string) error {
-	// Use PowerShell to disable the interface
 	disableCmd := exec.Command("powershell", "-Command", fmt.Sprintf(`Disable-NetAdapter -Name "%s" -Confirm:$false`, interfaceName))
-	disableOutput, err := disableCmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("failed to disable interface: %v, output: %s", err, string(disableOutput))
+	if output, err := disableCmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("disable error: %v, output: %s", err, output)
 	}
 
-	time.Sleep(1 * time.Second) // Wait for clean disable
+	time.Sleep(1 * time.Second)
 
-	// Re-enable the interface
 	enableCmd := exec.Command("powershell", "-Command", fmt.Sprintf(`Enable-NetAdapter -Name "%s" -Confirm:$false`, interfaceName))
-	enableOutput, err := enableCmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("failed to enable interface: %v, output: %s", err, string(enableOutput))
+	if output, err := enableCmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("enable error: %v, output: %s", err, output)
 	}
 
-	fmt.Printf("Successfully restarted interface %s\n", interfaceName)
+	fmt.Printf("Restarted interface: %s\n", interfaceName)
 	return nil
 }
 
-// sendError1 sends an error response as JSON
-func sendError1(w http.ResponseWriter, msg string, err error) {
+// sendRestartError sends a standardized JSON error response
+func sendRestartError(w http.ResponseWriter, msg string, err error) {
 	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"status":  "error",
+	resp := map[string]interface{}{
+		"status":  "failed",
 		"message": msg,
-		"details": err.Error(),
-	})
+		"data": map[string]interface{}{
+			"details": err.Error(),
+		},
+	}
+	json.NewEncoder(w).Encode(resp)
 }

@@ -8,62 +8,86 @@ import (
 	"path/filepath"
 )
 
-// Define the structure of the expected JSON
 type SSHKeyPayload struct {
 	PublicKey string `json:"public_key"`
 }
 
 func HandleSSHUpload(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	if r.Method != http.MethodPost {
-		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Only POST method is allowed",
+		})
 		return
 	}
 
-	// Decode JSON body
 	var payload SSHKeyPayload
-	err := json.NewDecoder(r.Body).Decode(&payload)
-	if err != nil {
-		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Invalid JSON format",
+		})
 		return
 	}
 
 	if payload.PublicKey == "" {
-		http.Error(w, "Public key is required", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Public key is required",
+		})
 		return
 	}
 
-	// Get current user home directory
 	currentUser, err := user.Current()
 	if err != nil {
-		http.Error(w, "Unable to determine current user", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Unable to determine current user",
+		})
 		return
 	}
 
 	sshDir := filepath.Join(currentUser.HomeDir, ".ssh")
 	authKeysPath := filepath.Join(sshDir, "authorized_keys")
 
-	// Create .ssh directory if it doesn't exist
 	if _, err := os.Stat(sshDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(sshDir, 0700); err != nil {
-			http.Error(w, "Failed to create .ssh directory", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{
+				"status":  "failed",
+				"message": "Failed to create .ssh directory",
+			})
 			return
 		}
 	}
 
-	// Open the authorized_keys file for appending
 	f, err := os.OpenFile(authKeysPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
-		http.Error(w, "Failed to open authorized_keys", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Failed to open authorized_keys",
+		})
 		return
 	}
 	defer f.Close()
 
-	// Write the public key with a newline
 	if _, err := f.WriteString(payload.PublicKey + "\n"); err != nil {
-		http.Error(w, "Failed to write SSH key", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Failed to write SSH key",
+		})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("SSH key uploaded successfully"))
+	json.NewEncoder(w).Encode(map[string]string{
+		"status": "success",
+	})
 }

@@ -44,14 +44,18 @@ type Rule struct {
 	Options     string `json:"options"`
 }
 
-// HTTP handler for GET /firewall
 func GetWindowsFirewallRules(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Method Not Allowed",
+		})
 		return
 	}
 
-	// PowerShell script with string formatting
 	psCommand := `
 Get-NetFirewallRule |
 Select-Object `
@@ -69,18 +73,21 @@ Select-Object `
 ConvertTo-Json -Depth 3
 `
 
-	// Run PowerShell command
 	cmd := exec.Command("powershell", "-Command", psCommand)
 	output, err := cmd.Output()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to execute PowerShell: %v", err), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": fmt.Sprintf("Failed to execute PowerShell: %v", err),
+		})
 		return
 	}
 
 	var rules []FirewallRule
 	err = json.Unmarshal(output, &rules)
 
-	// Handle single-object fallback
+	// Handle single object fallback
 	if err != nil {
 		var single FirewallRule
 		if err2 := json.Unmarshal(output, &single); err2 == nil {
@@ -89,11 +96,14 @@ ConvertTo-Json -Depth 3
 		}
 	}
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to parse JSON output: %v\nRaw output: %s", err, output), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": fmt.Sprintf("Failed to parse JSON output: %v", err),
+		})
 		return
 	}
 
-	// Map to custom format
 	formatted := FirewallRuleFormatted{
 		Type: "firewall",
 		Chains: []Chain{
@@ -117,6 +127,5 @@ ConvertTo-Json -Depth 3
 		})
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(formatted)
 }

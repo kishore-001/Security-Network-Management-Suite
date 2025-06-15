@@ -9,25 +9,39 @@ import (
 
 type PasswordChange struct {
 	Username        string `json:"username"`
-	CurrentPassword string `json:"current"`
+	CurrentPassword string `json:"current"` // unused in current logic
 	NewPassword     string `json:"new"`
 	ConfirmPassword string `json:"confirm"`
 }
 
 func HandlePasswordChange(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	if r.Method != http.MethodPost {
-		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Only POST allowed",
+		})
 		return
 	}
 
 	var p PasswordChange
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Invalid input",
+		})
 		return
 	}
 
 	if p.NewPassword != p.ConfirmPassword {
-		http.Error(w, "New passwords do not match", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "New passwords do not match",
+		})
 		return
 	}
 
@@ -38,10 +52,15 @@ func HandlePasswordChange(w http.ResponseWriter, r *http.Request) {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		http.Error(w, "Password change failed: "+string(out), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Password change failed: " + string(out),
+		})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Password changed successfully"))
+	json.NewEncoder(w).Encode(map[string]string{
+		"status": "success",
+	})
 }

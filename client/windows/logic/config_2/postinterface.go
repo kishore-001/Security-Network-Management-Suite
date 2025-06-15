@@ -118,7 +118,7 @@ func updateInterfaceStatus(interfaceName, status string) error {
 func sendError(w http.ResponseWriter, message string, err error) {
 	w.WriteHeader(http.StatusBadRequest)
 	json.NewEncoder(w).Encode(map[string]string{
-		"status":  "error",
+		"status":  "failed",
 		"message": message,
 		"error":   err.Error(),
 	})
