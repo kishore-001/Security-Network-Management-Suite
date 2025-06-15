@@ -7,18 +7,8 @@ RETURNING id, name, role, email;
 DELETE FROM users
 WHERE name = $1;
 
--- name: AddMacAccess :one
-INSERT INTO mac_access_status (mac, status)
-VALUES ($1, $2)
-RETURNING id, mac, status, created_at, updated_at;
 
--- name: RemoveMacAccess :exec
-DELETE FROM mac_access_status
-WHERE mac = $1;
-
--- name: IsMacWhitelisted :one
-SELECT EXISTS (
-    SELECT 1
-    FROM mac_access_status
-    WHERE mac = $1 AND status = 'WHITELISTED'
-);
+-- name: ListUsers :many
+SELECT id, name, role, email
+FROM users
+ORDER BY name;

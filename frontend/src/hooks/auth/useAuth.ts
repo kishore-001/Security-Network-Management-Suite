@@ -1,6 +1,6 @@
 // hooks/useAuth.ts
 import { useState, useEffect } from 'react';
-import AuthService from '../auth/auth';
+import AuthService from '../../auth/auth';
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);

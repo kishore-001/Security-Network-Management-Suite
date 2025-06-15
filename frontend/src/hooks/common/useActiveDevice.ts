@@ -1,5 +1,5 @@
 // hooks/useActiveDevice.ts
-import { useAppContext } from '../context/AppContext';
+import { useAppContext } from '../../context/AppContext';
 
 export const useActiveDevice = () => {
   const { 

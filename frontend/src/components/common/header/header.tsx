@@ -4,8 +4,8 @@ import "./header.css";
 import { FaBell, FaNetworkWired, FaServer, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
-import { useRole } from "../../../hooks/useRole";
+import { useAuth } from "../../../hooks";
+import { useRole } from "../../../hooks";
 import type { Device } from "../../../types/app";
 import { useAppContext } from "../../../context/AppContext";
 

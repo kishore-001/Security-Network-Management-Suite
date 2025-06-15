@@ -11,30 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const addMacAccess = `-- name: AddMacAccess :one
-INSERT INTO mac_access_status (mac, status)
-VALUES ($1, $2)
-RETURNING id, mac, status, created_at, updated_at
-`
-
-type AddMacAccessParams struct {
-	Mac    string `db:"mac" json:"mac"`
-	Status string `db:"status" json:"status"`
-}
-
-func (q *Queries) AddMacAccess(ctx context.Context, arg AddMacAccessParams) (MacAccessStatus, error) {
-	row := q.db.QueryRowContext(ctx, addMacAccess, arg.Mac, arg.Status)
-	var i MacAccessStatus
-	err := row.Scan(
-		&i.ID,
-		&i.Mac,
-		&i.Status,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (name, role, email, password_hash)
 VALUES ($1, $2, $3, $4)
@@ -82,27 +58,43 @@ func (q *Queries) DeleteUserByName(ctx context.Context, name string) error {
 	return err
 }
 
-const isMacWhitelisted = `-- name: IsMacWhitelisted :one
-SELECT EXISTS (
-    SELECT 1
-    FROM mac_access_status
-    WHERE mac = $1 AND status = 'WHITELISTED'
-)
+const listUsers = `-- name: ListUsers :many
+SELECT id, name, role, email
+FROM users
+ORDER BY name
 `
 
-func (q *Queries) IsMacWhitelisted(ctx context.Context, mac string) (bool, error) {
-	row := q.db.QueryRowContext(ctx, isMacWhitelisted, mac)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
+type ListUsersRow struct {
+	ID    uuid.UUID `db:"id" json:"id"`
+	Name  string    `db:"name" json:"name"`
+	Role  string    `db:"role" json:"role"`
+	Email string    `db:"email" json:"email"`
 }
 
-const removeMacAccess = `-- name: RemoveMacAccess :exec
-DELETE FROM mac_access_status
-WHERE mac = $1
-`
-
-func (q *Queries) RemoveMacAccess(ctx context.Context, mac string) error {
-	_, err := q.db.ExecContext(ctx, removeMacAccess, mac)
-	return err
+func (q *Queries) ListUsers(ctx context.Context) ([]ListUsersRow, error) {
+	rows, err := q.db.QueryContext(ctx, listUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListUsersRow{}
+	for rows.Next() {
+		var i ListUsersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Role,
+			&i.Email,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

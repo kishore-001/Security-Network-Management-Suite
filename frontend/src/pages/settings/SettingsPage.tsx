@@ -1,33 +1,27 @@
-import React, { useState } from 'react';
+// pages/settings/SettingsPage.tsx
+import React from 'react';
 import Sidebar from '../../components/common/sidebar/sidebar';
 import Header from '../../components/common/header/header';
-import SettingsTabs from './SettingsTabs';
 import UserManagement from './UserManagement/UserManagement';
-import AdditionalConfig from './AdditionalConfig/AdditionalConfig';
 import './settings.css';
 
 const SettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'user' | 'config'>('user');
-
   return (
-    <div className="page-layout">
-      {/* HEADER */}
+    <>
       <Header />
-
-      {/* MAIN SECTION */}
-      <div className="main-section">
-        {/* Sidebar now renders Health internally */}
-        <div className="left-panel">
-          <Sidebar />
-        </div>
-
-        {/* Right-hand content */}
-        <div className="content-container">
-          <SettingsTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-          {activeTab === 'user' ? <UserManagement /> : <AdditionalConfig />}
+      <div className="container">
+        <Sidebar />
+        <div className="content">
+          <div className="settings-main-content">
+            <div className="settings-header-section">
+              <h1 className="settings-page-title">Settings</h1>
+              <p className="settings-page-subtitle">Manage user accounts and system configuration</p>
+            </div>
+            <UserManagement />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

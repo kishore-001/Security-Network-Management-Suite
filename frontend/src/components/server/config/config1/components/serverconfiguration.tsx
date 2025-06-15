@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './serverconfiguration.css';
 import { FaServer, FaCog, FaGlobe } from 'react-icons/fa';
 import ModalWrapper from './modalwrapper';
-import { useServerConfiguration } from '../../../../../hooks/useServerConfiguration';
+import { useServerConfiguration } from '../../../../../hooks';
 import { useNotification } from '../../../../../context/NotificationContext';
 
 const ServerConfiguration: React.FC = () => {

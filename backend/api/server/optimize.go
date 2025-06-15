@@ -8,8 +8,8 @@ import (
 
 func RegisterOptimisation(mux *http.ServeMux, queries *generaldb.Queries) {
 	// GET-like operations via POST
-	mux.HandleFunc("/api/admin/server/cleaninfo", optimisation.GetCleanInfo(queries))
-	mux.HandleFunc("/api/admin/server/optimize", optimisation.PostClean(queries))
-	mux.HandleFunc("/api/admin/server/service", optimisation.GetServices(queries))
-	mux.HandleFunc("/api/admin/server/restartservice", optimisation.PostRestartService(queries))
+	mux.HandleFunc("/api/admin/server/resource/cleaninfo", optimisation.GetCleanInfo(queries))
+	mux.HandleFunc("/api/admin/server/resource/optimize", optimisation.PostClean(queries))
+	mux.HandleFunc("/api/admin/server/resource/service", optimisation.GetServices(queries))
+	mux.HandleFunc("/api/admin/server/resource/restartservice", optimisation.PostRestartService(queries))
 }

@@ -1,7 +1,7 @@
 // hooks/useDevicesByMode.ts
 import { useState, useEffect } from 'react';
-import type { Device } from '../types/app';
-import AuthService from '../auth/auth';
+import type { Device } from '../../types/app';
+import AuthService from '../../auth/auth';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 

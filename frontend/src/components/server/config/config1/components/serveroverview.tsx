@@ -1,7 +1,7 @@
 // components/server/config/config1/components/serveroverview.tsx
 import React from 'react';
 import './serveroverview.css';
-import { useServerOverview } from '../../../../../hooks/useServerOverview';
+import { useServerOverview } from '../../../../../hooks';
 
 const ServerOverview: React.FC = () => {
   const { data, loading, error } = useServerOverview();

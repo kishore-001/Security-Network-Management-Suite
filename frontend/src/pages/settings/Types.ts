@@ -1,12 +1,9 @@
+// pages/settings/Types.ts
 export interface User {
   id: number;
   username: string;
-  role: string;
+  role: 'admin' | 'viewer';
   email: string;
-}
-
-export interface MACAddress {
-  id: number;
-  address: string;
-  type: 'whitelist' | 'blacklist';
+  created_at?: string;
+  last_login?: string;
 }

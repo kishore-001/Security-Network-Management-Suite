@@ -1,7 +1,7 @@
 // hooks/useCommandExecution.ts
 import { useState } from 'react';
-import AuthService from '../auth/auth';
-import { useAppContext } from '../context/AppContext';
+import AuthService from '../../auth/auth';
+import { useAppContext } from '../../context/AppContext';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 

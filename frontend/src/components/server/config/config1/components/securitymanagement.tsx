@@ -3,7 +3,7 @@ import { useState } from "react";
 import "./securitymanagement.css";
 import ModalWrapper from "./modalwrapper";
 import { FaShieldAlt, FaKey, FaLock, FaUpload } from "react-icons/fa";
-import { useSecurityManagement } from "../../../../../hooks/useSecurityManagement";
+import { useSecurityManagement } from "../../../../../hooks";
 import { useNotification } from "../../../../../context/NotificationContext";
 
 const SecurityManagement = () => {

@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import './servermanagement.css';
 import ModalWrapper from './modalwrapper';
+import AccessTokenModal from '../../../../common/accesstoken/AccessTokenModal';
 import { FaServer, FaTrash, FaPlus } from 'react-icons/fa';
-import { useServerManagement } from '../../../../../hooks/useServerManagement';
+import { useServerManagement } from '../../../../../hooks/server/useServerManagement';
 import { useNotification } from '../../../../../context/NotificationContext';
 
 interface ServerFormData {
@@ -12,8 +13,19 @@ interface ServerFormData {
   os: string;
 }
 
+interface AccessTokenData {
+  token: string;
+  deviceInfo: {
+    tag: string;
+    ip: string;
+    os: string;
+  };
+}
+
 const ServerManagement: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showTokenModal, setShowTokenModal] = useState(false);
+  const [accessTokenData, setAccessTokenData] = useState<AccessTokenData | null>(null);
   const [newServer, setNewServer] = useState<ServerFormData>({
     ip: '',
     tag: '',
@@ -49,19 +61,32 @@ const ServerManagement: React.FC = () => {
     setSubmitError(null);
 
     try {
-      const success = await createServer({
+      const result = await createServer({
         ip: newServer.ip.trim(),
         tag: newServer.tag.trim(),
         os: newServer.os
       });
 
-      if (success) {
+      if (result && typeof result === 'object' && 'access_token' in result) {
+        // Show access token modal
+        setAccessTokenData({
+          token: result.access_token,
+          deviceInfo: {
+            tag: newServer.tag.trim(),
+            ip: newServer.ip.trim(),
+            os: newServer.os
+          }
+        });
+        setShowTokenModal(true);
+        
         addNotification({
           title: 'Server Created',
           message: `Server "${newServer.tag}" has been successfully created`,
           type: 'success',
           duration: 4000
         });
+        
+        // Reset form
         setNewServer({ ip: '', tag: '', os: 'linux' });
         setSubmitError(null);
       }
@@ -106,6 +131,11 @@ const ServerManagement: React.FC = () => {
     setShowModal(false);
     setNewServer({ ip: '', tag: '', os: 'linux' });
     setSubmitError(null);
+  };
+
+  const handleCloseTokenModal = () => {
+    setShowTokenModal(false);
+    setAccessTokenData(null);
   };
 
   const formatDate = (dateString: string): string => {
@@ -274,6 +304,16 @@ const ServerManagement: React.FC = () => {
             </div>
           </div>
         </ModalWrapper>
+      )}
+
+      {/* Access Token Modal */}
+      {accessTokenData && (
+        <AccessTokenModal
+          isOpen={showTokenModal}
+          onClose={handleCloseTokenModal}
+          accessToken={accessTokenData.token}
+          deviceInfo={accessTokenData.deviceInfo}
+        />
       )}
     </>
   );

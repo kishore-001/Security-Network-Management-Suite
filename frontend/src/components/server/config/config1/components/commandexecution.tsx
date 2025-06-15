@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import './commandexecution.css';
 import { FaTerminal, FaPlay, FaCode, FaExclamationTriangle, FaCopy, FaDownload } from 'react-icons/fa';
 import ModalWrapper from './modalwrapper';
-import { useCommandExecution } from '../../../../../hooks/useCommandExecution';
+import { useCommandExecution } from '../../../../../hooks/server/useCommandExecution';
 import { useNotification } from '../../../../../context/NotificationContext';
 
 const CommandExecution: React.FC = () => {

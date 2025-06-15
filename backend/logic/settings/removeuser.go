@@ -18,7 +18,7 @@ func HandleRemoveUser(queries *generaldb.Queries) http.HandlerFunc {
 
 		// Parse request body
 		var req struct {
-			Name string `json:"name"`
+			Name string `json:"username"`
 		}
 
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

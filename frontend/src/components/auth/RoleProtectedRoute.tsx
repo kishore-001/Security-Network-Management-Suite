@@ -1,7 +1,7 @@
 // components/auth/RoleProtectedRoute.tsx
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useRole } from '../../hooks/useRole';
+import { useRole } from '../../hooks';
 
 interface RoleProtectedRouteProps {
   children: React.ReactNode;

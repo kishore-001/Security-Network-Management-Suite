@@ -1,20 +1,24 @@
+// pages/resource/resource.tsx
+import React from 'react';
 import Sidebar from "../../components/common/sidebar/sidebar";
-import Resource from "../../components/server/ResourceOptimization/ResourceOptimization";
+import Resource from "../../components/server/ResourceOptimization/Resource";
 import Header from "../../components/common/header/header";
-import '../../App.css'; 
+import './resource.css';
 
-function Config() {
+function ResourcePage() {
   return (
-    <div className="page-layout">
+    <>
       <Header />
-      <div className="main-section">
+      <div className="container">
         <Sidebar />
-        <div className="content-container">
-          <Resource />
+        <div className="content">
+          <div className="resource-main-content">
+            <Resource />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default Config;
+export default ResourcePage;

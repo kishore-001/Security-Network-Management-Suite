@@ -1,6 +1,6 @@
 // hooks/useServerManagement.ts
 import { useState, useEffect } from 'react';
-import AuthService from '../auth/auth';
+import AuthService from '../../auth/auth';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -71,7 +71,7 @@ export const useServerManagement = () => {
     }
   };
 
-  const createServer = async (serverData: CreateServerRequest): Promise<boolean> => {
+  const createServer = async (serverData: CreateServerRequest): Promise<CreateServerResponse | boolean> => {
     setCreating(true);
     setError(null);
 
@@ -92,7 +92,7 @@ export const useServerManagement = () => {
         if (data.status === 'success') {
           // Refresh the server list
           await fetchServers();
-          return true;
+          return data; // Return the full response including access_token
         } else {
           throw new Error('Server creation failed: Invalid response status');
         }

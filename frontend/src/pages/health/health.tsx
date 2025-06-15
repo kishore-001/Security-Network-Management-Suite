@@ -1,17 +1,24 @@
+// pages/health/health.tsx
+import React from 'react';
 import Sidebar from "../../components/common/sidebar/sidebar";
+import HealthDashboard from "../../components/server/health/HealthDashboard";
 import Header from "../../components/common/header/header";
-import "../../App.css";
-//import Health from "../../components/server/health/health";
-function Config() {
+import './health.css';
+
+function HealthPage() {
   return (
-    <div className="page-layout">
+    <>
       <Header />
-      <div className="main-section">
+      <div className="container">
         <Sidebar />
-        <div className="content-container"></div>
+        <div className="content">
+          <div className="health-main-content">
+            <HealthDashboard />
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default Config;
+export default HealthPage;
