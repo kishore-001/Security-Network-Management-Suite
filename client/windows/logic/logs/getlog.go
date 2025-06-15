@@ -19,13 +19,7 @@ type EventLogEntry struct {
 	Message  string `json:"message"`
 }
 
-type AllLogs struct {
-	EventLogs []EventLogEntry `json:"event_logs"`
-	FileLogs  []FileLogEntry  `json:"file_logs"`
-}
-
 func cleanString(s string) string {
-	// Replace escape sequences with a space
 	replacer := strings.NewReplacer(
 		"\r\n", " ",
 		"\n", " ",
@@ -48,7 +42,7 @@ func HandleAllSystemLogs(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command("powershell", "-Command", psCommand)
 	output, err := cmd.Output()
 	if err != nil {
-		http.Error(w, "Failed to retrieve event logs: "+err.Error(), http.StatusInternalServerError)
+		sendLogError(w, "Failed to retrieve event logs", err)
 		return
 	}
 
@@ -58,17 +52,16 @@ func HandleAllSystemLogs(w http.ResponseWriter, r *http.Request) {
 		if err2 := json.Unmarshal(output, &single); err2 == nil {
 			eventLogs = []EventLogEntry{single}
 		} else {
-			http.Error(w, "Failed to parse event logs", http.StatusInternalServerError)
+			sendLogError(w, "Failed to parse event logs", err)
 			return
 		}
 	}
 
-	// Clean event log messages
 	for i := range eventLogs {
 		eventLogs[i].Message = cleanString(eventLogs[i].Message)
 	}
 
-	// 2. Read log files (excluding specific ones)
+	// 2. Read file logs
 	logDirs := []string{
 		`C:\Windows\Logs`,
 		`C:\ProgramData\Microsoft\Windows\WER\ReportArchive`,
@@ -92,7 +85,6 @@ func HandleAllSystemLogs(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			// Exclude unwanted file
 			if strings.EqualFold(file.Name(), "StorGroupPolicy.log") {
 				continue
 			}
@@ -109,14 +101,26 @@ func HandleAllSystemLogs(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// 3. Combine and return all logs
-	logs := AllLogs{
-		EventLogs: eventLogs,
-		FileLogs:  fileLogs,
+	// Final response
+	resp := map[string]interface{}{
+		"status":  "success",
+		"message": "System logs retrieved successfully",
+		"data": map[string]interface{}{
+			"event_logs": eventLogs,
+			"file_logs":  fileLogs,
+		},
 	}
 
-	if err := json.NewEncoder(w).Encode(logs); err != nil {
-		http.Error(w, "Failed to encode logs: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	json.NewEncoder(w).Encode(resp)
+}
+
+func sendLogError(w http.ResponseWriter, msg string, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":  "failed",
+		"message": msg,
+		"data": map[string]interface{}{
+			"details": err.Error(),
+		},
+	})
 }

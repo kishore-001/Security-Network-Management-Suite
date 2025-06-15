@@ -29,8 +29,14 @@ type NetAdapter struct {
 }
 
 func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	if r.Method != http.MethodGet {
-		http.Error(w, "Only GET method allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Only GET method allowed",
+		})
 		return
 	}
 
@@ -41,7 +47,11 @@ func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command("netsh", "interface", "ip", "show", "config")
 	output, err := cmd.Output()
 	if err != nil {
-		http.Error(w, "Failed to get IP config: "+err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Failed to get IP config: " + err.Error(),
+		})
 		return
 	}
 
@@ -69,7 +79,6 @@ func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
 				config.DNS = strings.Join(tempDNS, ", ")
 				captured = true
 			}
-			// Reset temp values
 			tempMethod, tempIP, tempGW, tempSubnet = "", "", "", ""
 			tempDNS = []string{}
 			isLoopback = false
@@ -96,7 +105,6 @@ func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
 		} else if strings.HasPrefix(line, "DNS servers configured through DHCP") ||
 			strings.HasPrefix(line, "Statically Configured DNS Servers") {
 
-			// Primary DNS
 			parts := strings.Split(line, ":")
 			if len(parts) > 1 {
 				dns := strings.TrimSpace(parts[1])
@@ -105,7 +113,6 @@ func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			// Secondary DNS or continuation lines
 			for scanner.Scan() {
 				nextLine := strings.TrimSpace(scanner.Text())
 				if nextLine == "" || strings.Contains(nextLine, ":") {
@@ -116,7 +123,6 @@ func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Final fallback capture if still not done
 	if !captured && tempIP != "" && !isLoopback {
 		config.IPMethod = tempMethod
 		config.IPAddress = tempIP
@@ -125,7 +131,6 @@ func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
 		config.DNS = strings.Join(tempDNS, ", ")
 	}
 
-	// PowerShell to get interface status
 	ifaceCmd := exec.Command("powershell", "-Command", "Get-NetAdapter | Select-Object Name, Status | ConvertTo-Json")
 	ifaceOutput, err := ifaceCmd.Output()
 	if err == nil {
@@ -136,7 +141,11 @@ func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
 			if err2 := json.Unmarshal(ifaceOutput, &single); err2 == nil {
 				adapters = append(adapters, single)
 			} else {
-				http.Error(w, "Failed to parse adapter list: "+err.Error(), http.StatusInternalServerError)
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(map[string]string{
+					"status":  "failed",
+					"message": "Failed to parse adapter list: " + err.Error(),
+				})
 				return
 			}
 		}
@@ -156,6 +165,5 @@ func NetworkConfigHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(config)
 }

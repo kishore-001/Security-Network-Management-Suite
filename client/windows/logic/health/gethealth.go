@@ -89,18 +89,43 @@ func getProcessName(pid int32) string {
 func HandleHealthConfig(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
+	var (
+		cpuPercent []float64
+		vmStat     *mem.VirtualMemoryStat
+		diskStat   *disk.UsageStat
+		activeIface string
+		netStat    *NetStats
+		conns      []psnet.ConnectionStat
+		err        error
+	)
+
 	// CPU
-	cpuPercent, _ := cpu.Percent(time.Second, false)
+	cpuPercent, err = cpu.Percent(time.Second, false)
+	if err != nil {
+		sendHealthFailure(w, "Failed to get CPU stats", err)
+		return
+	}
 
 	// RAM
-	vmStat, _ := mem.VirtualMemory()
+	vmStat, err = mem.VirtualMemory()
+	if err != nil {
+		sendHealthFailure(w, "Failed to get memory stats", err)
+		return
+	}
 
-	// Disk (C:\ for Windows)
-	diskStat, _ := disk.Usage("C:\\")
+	// Disk
+	diskStat, err = disk.Usage("C:\\")
+	if err != nil {
+		sendHealthFailure(w, "Failed to get disk stats", err)
+		return
+	}
 
-	// Network
-	activeIface, _ := getActiveInterface()
-	var netStat *NetStats
+	// Network Interface
+	activeIface, err = getActiveInterface()
+	if err != nil {
+		sendHealthFailure(w, "Failed to get active interface", err)
+		return
+	}
 	if activeIface != "" {
 		netIOs, _ := psnet.IOCounters(true)
 		for _, iface := range netIOs {
@@ -115,8 +140,12 @@ func HandleHealthConfig(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Open ports (LISTEN)
-	conns, _ := psnet.Connections("inet")
+	// Open Ports
+	conns, err = psnet.Connections("inet")
+	if err != nil {
+		sendHealthFailure(w, "Failed to get open ports", err)
+		return
+	}
 	openPorts := []OpenPort{}
 	for _, conn := range conns {
 		if conn.Status == "LISTEN" && conn.Laddr.Port != 0 {
@@ -136,42 +165,39 @@ func HandleHealthConfig(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Compose result
+	// Compose health stats
 	stats := HealthStats{
 		CPU: CPUStats{
-			UsagePercent: 0,
+			UsagePercent: cpuPercent[0],
 		},
 		RAM: RAMStats{
-			Total:        0,
-			Used:         0,
-			Free:         0,
-			UsagePercent: 0,
+			Total:        bytesToMB(vmStat.Total),
+			Used:         bytesToMB(vmStat.Used),
+			Free:         bytesToMB(vmStat.Free),
+			UsagePercent: vmStat.UsedPercent,
 		},
 		Disk: DiskStats{
-			Total:        0,
-			Used:         0,
-			Free:         0,
-			UsagePercent: 0,
+			Total:        bytesToMB(diskStat.Total),
+			Used:         bytesToMB(diskStat.Used),
+			Free:         bytesToMB(diskStat.Free),
+			UsagePercent: diskStat.UsedPercent,
 		},
 		Net:       netStat,
 		OpenPorts: openPorts,
 	}
 
-	if len(cpuPercent) > 0 {
-		stats.CPU.UsagePercent = cpuPercent[0]
-	}
-	if vmStat != nil {
-		stats.RAM.Total = bytesToMB(vmStat.Total)
-		stats.RAM.Used = bytesToMB(vmStat.Used)
-		stats.RAM.Free = bytesToMB(vmStat.Free)
-		stats.RAM.UsagePercent = vmStat.UsedPercent
-	}
-	if diskStat != nil {
-		stats.Disk.Total = bytesToMB(diskStat.Total)
-		stats.Disk.Used = bytesToMB(diskStat.Used)
-		stats.Disk.Free = bytesToMB(diskStat.Free)
-		stats.Disk.UsagePercent = diskStat.UsedPercent
-	}
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":  "success",
+		"message": "System health metrics retrieved",
+		"data":    stats,
+	})
+}
 
-	json.NewEncoder(w).Encode(stats)
+func sendHealthFailure(w http.ResponseWriter, msg string, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":  "failed",
+		"message": msg,
+		"data":    err.Error(),
+	})
 }

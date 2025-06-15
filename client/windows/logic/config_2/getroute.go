@@ -3,12 +3,18 @@ package config_2
 import (
 	"net/http"
 	"os/exec"
+    "encoding/json"
 )
 
-// NetworkConfigHandler handles GET requests and returns network routes JSON from PowerShell
 func RouteHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	if r.Method != http.MethodGet {
-		http.Error(w, "Only GET method allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Only GET method allowed",
+		})
 		return
 	}
 
@@ -44,10 +50,13 @@ $routes | ConvertTo-Json -Depth 3
 	cmd := exec.Command("powershell", "-Command", psCmd)
 	output, err := cmd.Output()
 	if err != nil {
-		http.Error(w, "Failed to execute PowerShell command: "+err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "failed",
+			"message": "Failed to execute PowerShell command: " + err.Error(),
+		})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(output)
 }
